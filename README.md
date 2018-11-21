@@ -1,4 +1,4 @@
-# Cedus Frontend
+# CityEnabler Data Interpreter Tool Front End
 
 ## Installation
 
