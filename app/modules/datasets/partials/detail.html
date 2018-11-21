@@ -1,0 +1,293 @@
+<div ng-show="!DataLoaded" class="container">
+    <div class="loading-container">
+        <div class="loading"></div>
+        <div id="loading-text">loading</div>
+    </div>
+</div>
+
+<div ng-show="DataLoaded && !CanViewItem" class="container">
+	<br/>
+	<div class="form-custom-instructions">
+		{{ "You don't have enough permissions to view this content" | translate }}
+	</div>
+	<br/>
+</div>
+
+<div ng-show="DataLoaded && CanViewItem" class="container">
+    <div class="content-header">
+        <h1 class="fonticon fonticon-dataset ng-binding">{{ dataset.title }}</h1>
+
+        <div class="pc-visualization-formcontrols">
+            <div class="button-group">
+
+                <a type="button" ng-show="dataset.id" class="btn btn-primary btn-create"  href="#!/datasets/{{ dataset.id }}/edit">{{ 'Edit' | translate }}</a>
+                <a type="button" ng-show="dataset.id" class="btn btn-line" href="#!/visualizations/create/?datasets={{dataset.id}}">{{ 'Visualise' | translate }}</a>
+                <!--
+                <a type="button" class="btn btn-tree" href="https://carneades-dev.policycompass.eu/carneades/#/projects/compass" target="_blank" ng-disabled="true">Create
+                    Argument Map</a>
+                -->
+                
+                <!--
+                <a type="button" class="btn btn-danger" ng-click="deleteDataset(dataset)" ng-if="userState.loggedIn && (userState.userPath == dataset.creator_path || userState.isAdmin)">
+                    {{ 'Delete' | translate }}</a>
+                -->
+                <a type="button" class="btn btn-danger" ng-click="deleteDataset(dataset)" ng-if="CanDeleteDataset">
+                    {{ 'Delete' | translate }}</a>
+            </div>
+
+            <a href="#" ng-if="dataset.is_draft" ng-disabled="dataset.is_draft" class="btn btn-default btn-danger">{{ 'Draft' | translate }}</a>
+
+
+            <a type="button" class="btn btn-share" ng-click="share=!share" ng-class="{active: share}" ng-if="!1">{{ 'Share' | translate }}</a>
+        </div>
+        <div ng-class="{active: share}" class="share-window" id="share-window" ng-init="e=1">
+            <ul class="share-menu">
+                <div class="fonticon fonticon-close" ng-click="share=!share"></div>
+                <li><a href="" ng-click="e=1" ng-class="{active: e==1}">{{ 'Share' | translate }}</a></li>
+                <li><a href="" ng-click="e=2" ng-class="{active: e==2}">{{ 'Embed' | translate }}</a></li>
+            </ul>
+            <div ng-class="{active: e==1}" class="share-submenu">
+                <div class="row-block">
+                    <ul class="social-share">
+                        <li><a href="" class="fonticon fonticon-facebook"></a></li>
+                        <li><a href="" class="fonticon fonticon-twitter"></a></li>
+                        <li><a href="" class="fonticon fonticon-vk"></a></li>
+                        <li><a href="" class="fonticon fonticon-linkedin"></a></li>
+                        <li><a href="" class="fonticon fonticon-google"></a></li>
+                    </ul>
+                    <input type="text" value="{{ location.absUrl() }}">
+                </div>
+            </div>
+            <div ng-class="{active: e==2}" class="share-submenu">
+                <div class="row-block">
+                    <input type="text" value='iframe width="100%" height="300" scrolling="no" frameborder="no" src="http://localhost:9000/app/#/visualizations/4"'>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content-body">
+
+        <hot-table ng-if="showTable" settings="table.settings" datarows="table.items"></hot-table>
+        <br/>
+
+
+        <div class="row">
+            <h3 class="legend-primary">{{ 'Properties' | translate }}</h3>
+
+            <div class="metadata metadata-event">
+
+                <div class="form-group form-group-datasets">
+                	<!--                	
+                    <div class="form-item" ng-if="indicator.name">
+                        <div class="field-label">Indicator</div>
+                        <div class="field-content">{{indicator.name}}</div>
+                    </div>
+                    -->
+                    <div class="form-item" ng-if="dataset.class_id">
+                        <div class="field-label">{{ 'Dimension Type' | translate }}</div>
+                        <div class="field-content">
+                            <resource-title resource="Class" id="dataset.class_id"></resource-title>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group form-group-scale">
+                    <div class="form-item" ng-if="dataset.unit_id">
+                        <div class="field-label">{{ 'Unit' | translate }}</div>
+                        <div class="field-content">
+                            <resource-title resource="Unit" id="dataset.unit_id"></resource-title>
+                        </div>
+                    </div>
+                    <div class="form-item" ng-if="dataset.time">
+                        <div class="field-label">{{ 'Time Span' | translate }}</div>
+                        <div class="field-content">{{ dataset.time.start }} - {{ dataset.time.end }}</div>
+                    </div>
+                    <div class="form-item" ng-if="dataset.time">
+                        <div class="field-label"> {{ 'Resolution' | translate }}</div>
+                        <div class="field-content">{{ dataset.time.resolution }}</div>
+                    </div>
+                    
+                    
+                    <div class="form-item" ng-if="dataset.subscription_id">
+                        <div class="field-label">{{ 'Orion Context Broker subscrition id' | translate }}</div>
+                        <div class="field-content">{{ dataset.subscription_id }}</div>
+                    </div>
+                    
+                    
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="row">
+            <h3 class="legend-primary">{{ 'Details' | translate }}</h3>
+
+            <div class="metadata metadata-event">
+
+                <div class="form-group form-group-keywords" ng-if="dataset.keywords">
+                    <div class="field-label">{{ 'Keywords' | translate }}</div>
+                    <div class="field-content">{{dataset.keywords}}</div>
+                </div>
+
+
+                <div class="form-group form-group-keywords" ng-if="dataset.policy_domains">
+                    <div class="field-label">{{ 'Policy Domains' | translate }}</div>
+                    <div class="field-content">
+                        <div ng-repeat="policydomain in dataset.policy_domains">
+                            <span ng-if="policydomain" resolve-policydomain id="policydomain"></span></div>
+                    </div>
+                </div>
+
+                <div class="form-group form-group-modified">
+                    <div class="form-item" ng-if="dataset.creator_path">
+                        <div class="field-label">{{ 'Added by' | translate }}</div>
+                        <div class="field-content">
+                        	{{dataset.creator_path}}
+                            <!--
+                            <username userpath="{{ dataset.creator_path }}"></username>
+                            -->
+                        </div>
+                    </div>
+
+					<div class="form-item" ng-show="dataset.organization">
+	                	<div class="field-label">{{ 'Organization' | translate }}</div>
+	                    <div class="field-content"><span class="plotorganizationname" id="dataset.organization"></span></div>
+	                </div>
+                    
+                    <div class="form-item" ng-if="dataset.date_created">
+                        <div class="field-label">{{ 'Added' | translate }}</div>
+                        <div class="field-content">{{ dataset.date_created | date:'longDate' }}</div>
+                    </div>
+                    <div class="form-item" ng-if="dataset.date_modified">
+                        <div class="field-label">{{ 'Modified' | translate }}</div>
+                        <div class="field-content">{{ dataset.date_modified | date:'longDate' }}</div>
+                    </div>
+                </div>
+
+                <div ng-if="dataset.derived_from_id" class="form-group form-group-link">
+                    <div class="form-item">
+                        <div class="field-label">{{ 'Derived from' | translate }}</div>
+                        <div class="field-content">
+                            <a ng-if="originalDataset.id" href="#!/datasets/{{dataset.derived_from_id}}">{{originalDataset.title}}</a>
+                        </div>
+                    </div>
+                    <div class="form-item" ng-if="originalDataset.creator_path">
+                        <div class="field-label">{{ 'Added by' | translate }}</div>
+                        <div class="field-content">
+                            <username userpath="{{originalDataset.creator_path}}"></username>
+                        </div>
+                    </div>
+                </div>
+
+				<!--
+                <div class="form-group form-group-location">
+                    <div class="form-item" ng-if="dataset.language_id">
+                        <div class="field-label">{{ 'Language' | translate }}</div>
+                        <div class="field-content">
+                            <span resolve-language id="dataset.language_id"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-item" ng-if="dataset.spatials">
+                        <div class="field-label">{{ 'Locations' | translate }}</div>
+                        <div class="field-content">
+                            <div ng-repeat="spatial in dataset.spatials"
+                                <span ng-if="spatial" resolve-individual id="spatial"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				-->
+
+                <div class="form-group form-group-datasets">
+                    <div class="form-item" ng-if="dataset.description">
+                        <div class="field-label">{{ 'Description' | translate }}</div>
+                        <div class="field-content">{{ dataset.description }}</div>
+                    </div>
+                </div>
+				
+				<!--
+                <div class="form-group form-group-link">
+                    <div class="form-item" ng-if="dataset.resource.issued">
+                        <div class="field-label">{{ 'Resource Issued' | translate }}</div>
+                        <div class="field-content">{{ dataset.resource.issued | date:'longDate' }}</div>
+                    </div>
+
+                    <div class="form-item" ng-if="dataset.resource.external_resource">
+                        <div class="field-label">{{ 'External Resource' | translate }}</div>
+                        <div class="field-content">
+                            <a href="{{ dataset.resource.url }}" target="_blank">
+                                <resource-title resource="ExternalResource" id="dataset.resource.external_resource"></resource-title>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-item" ng-if="dataset.resource.custom">
+                        <div class="field-label">{{ 'Name' | translate }}</div>
+                        <a href="{{ dataset.resource.url }}" target="_blank">
+                            <div class="field-content">{{ dataset.resource.custom }}</div>
+                        </a>
+                    </div>
+                    <div class="form-item" ng-if="dataset.license_id">
+                        <div class="field-label">{{ 'License' | translate }}</div>
+                        <div class="field-content">
+                            <span resolve-license id="dataset.license_id"></span>
+                        </div>
+                    </div>
+                </div>
+				-->
+
+				<!--
+                <div class="form-group form-group-lg">
+                    <div class="form-item">
+                        <div class="field-label">Rating</div>
+                        <div class="field-content">
+                            <pc-rating ng-if="dataset.id" rating-id="dataset_{{dataset.id}}"></pc-rating>
+                        </div>
+                    </div>
+                </div>
+				-->
+
+                <div class="form-group form-group-rating">
+                    <div class="form-item" ng-if="dataset.version">
+                        <div class="field-label">{{ 'Version' | translate }}</div>
+                        <div class="field-content">{{ dataset.version }}</div>
+                    </div>
+                </div>
+
+
+                <div ng-show="relatedVisualizations.length>0" class="form-group form-group-visualisations form-group-external">
+                    <div class="form-item">
+                        <div class="field-label">{{ 'Visualizations' | translate }}</div>
+                        <div class="field-content">
+                            <div ng-repeat="visualization in relatedVisualizations">
+                                <a ng-href="#!/visualizations/{{ visualization.id }}">{{ visualization.title }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+<!--
+        <div class="row">
+            <div class="col-lg-12">
+                <legend class="legend-primary">Discussion</legend>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <show-discussion ng-if="dataset.id" data-key="dataset_{{ dataset.id }}"></show-discussion>
+            </div>
+        </div>
+-->
+    </div>
+
+</div>

@@ -1,0 +1,212 @@
+<div ng-show="!DataLoaded" class="container">
+    <div class="loading-container">
+        <div class="loading"></div>
+        <div id="loading-text">loading</div>
+    </div>
+</div>
+
+<div ng-show="DataLoaded && !CanViewItem" class="container">
+	<br/>
+	<div class="form-custom-instructions">
+		{{ "You don't have enough permissions to view this content" | translate }}
+	</div>
+	<br/>
+</div>
+
+<div ng-show="DataLoaded && CanViewItem" class="container">
+    <div class="content-header">
+        <h1 class="fonticon fonticon-event">{{ event.title }}</h1>
+
+        <div class="pc-visualization-formcontrols">
+            <div class="btn-group">
+                <a type="button" class="btn btn-primary  btn-create" ng-show="event.id" href="#!/events/{{ event.id }}/edit">{{ 'Edit' | translate }}</a>
+               <!--
+               <a type="button" class="btn btn-danger  btn-clear"  ng-if="userState.loggedIn && (userState.userPath == event.creator_path || userState.isAdmin)"  ng-click="deleteEvent(event)">{{ 'Delete' | translate }}</a>
+               -->
+               <a type="button" class="btn btn-danger  btn-clear"  ng-if="CanDeleteEvent"  ng-click="deleteEvent(event)">{{ 'Delete' | translate }}</a>
+               
+            </div>
+
+            <a href="#" ng-if="event.is_draft" ng-disabled="event.is_draft" class="btn btn-default btn-danger">{{ 'Draft' | translate }}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="metadata metadata-event metadata-event-description">
+            <div class="form-group form-group-description" ngshow="event.description">
+                <div class="field-label">{{ 'Description' | translate }}</div>
+                <div class="field-content">{{event.description}}</div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="row">
+        <h3 class="legend-primary">{{ 'Details' | translate }}</h3>
+
+
+        <!-- FIELDS START -->
+
+
+
+        <div class="metadata metadata-event">
+
+            <div class="form-group form-group-keywords" ng-show="event.policy_domains">
+                <div class="form-item" ng-show="event.policy_domains">
+                    <div class="field-label">{{ 'Policy Domains' | translate }}</div>
+                    <div class="field-content">
+                        <span ng-repeat="p in event.policy_domains">{{ p.title }}{{$last ? '' : ', '}}</span></div>
+                </div>
+            </div>
+
+            <div class="form-group form-group-keywords" ng-show="event.keywords">
+                <div class="field-label">{{ 'Keywords' | translate }}</div>
+                <div class="field-content">{{event.keywords}}</div>
+            </div>
+
+            <div class="form-group form-group-date">
+                <div class="form-item" ngshow="event.startEventDate">
+                    <div class="field-label">{{ 'Event start' | translate }}</div>
+                    <div class="field-content">{{ event.startEventDate | date:'longDate' }}</div>
+                </div>
+
+                <div class="form-item" ng-show="event.endEventDate">
+                    <div class="field-label">{{ 'Event end' | translate }}</div>
+                    <div class="field-content">{{ event.endEventDate | date:'longDate' }}</div>
+                </div>
+            </div>
+            <div class="form-group form-group-modified">
+                <div class="form-item" ng-if="event.creator_path">
+                    <div class="field-label">{{ 'Added by' | translate }}</div>
+                    <div class="field-content">
+                    	{{ event.creator_path }}
+                    	<!--
+                        <username userpath="{{ event.creator_path }}"></username>
+                       -->
+                    </div>
+                </div>
+
+				<div class="form-item" ng-show="event.organization">
+                	<div class="field-label">{{ 'Organization' | translate }}</div>
+                    <div class="field-content"><span class="plotorganizationname" id="event.organization"></span></div>
+                </div>
+
+                <div class="form-item" ng-show="event.date_created">
+                    <div class="field-label">{{ 'Added' | translate }}</div>
+                    <div class="field-content">{{ event.date_created | date:'longDate' }}</div>
+                </div>
+
+
+                <div class="form-item" ng-show="event.date_modified">
+                    <div class="field-label">{{ 'Modified' | translate }}</div>
+                    <div class="field-content">{{ event.date_modified | date:'longDate' }}</div>
+                </div>
+            </div>
+
+            <div ng-if="event.derived_from_id" class="form-group form-group-link">
+                <div class="form-item">
+                    <div class="field-label">{{ 'Derived from' | translate }}</div>
+                    <div class="field-content">
+                        <a ng-if="originalEvent.id" href="#!/events/{{event.derived_from_id}}">{{originalEvent.title}}</a>
+                    </div>
+                </div>
+                <div class="form-item" ng-if="originalEvent.creator_path">
+                    <div class="field-label">{{ 'Added by' | translate }}</div>
+                    <div class="field-content">
+                        <username userpath="{{originalEvent.creator_path}}"></username>
+                    </div>
+                </div>
+            </div>
+
+			<!--
+            <div class="form-group form-group-location">
+                <div class="form-item" ng-if="event.spatials">
+                        <div class="field-label">{{ 'Locations' | translate }}</div>
+                        <div class="field-content">
+                            <div ng-repeat="spatial in event.spatials"
+                                <span ng-if="spatial" resolve-individual id="spatial"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                <div class="form-item" ng-show="language.title">
+                    <div class="field-label">{{ 'Language' | translate }}</div>
+                    <div class="field-content">{{ language.title }}</div>
+                </div>
+            </div>
+           -->
+            <div ng-show="event.detailsURL" class="form-group form-group-link" ngshow="event.detailsURL">
+                <div class="field-label">{{ 'Details URL' | translate }}</div>
+                <div class="field-content"><a href="{{ event.detailsURL }}" target="_blank">{{ event.detailsURL }}</a>
+                </div>
+            </div>
+
+
+            <div class="form-group form-group-external" ng-show="event.externalResourceID > 0">
+                <div class="field-label">{{ 'External Resource ID' | translate }}</div>
+                <div class="field-content">{{ event.externalResourceID }}</div>
+            </div>
+
+			<!--
+            <div class="form-group form-group-rating">
+                <div class="form-item">
+                    <div class="field-label">{{ 'Rating' | translate }}</div>
+                    <div class="field-content">
+                        <pc-rating ng-if="event.id" rating-id="event_{{event.id}}"></pc-rating>
+                    </div>
+                </div>
+            </div>
+			-->
+
+        </div>
+
+        <!-- FIELDS END -->
+
+    </div>
+
+    <div class="row" ng-show="linked_event_visualization.results">
+        <h3 class="legend-primary">{{ 'Linked Visualizations' | translate }}</h3>
+
+
+        <div class="col-lg-3 pc-tile" ng-repeat="rv in linked_event_visualization.results">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#!/visualizations/{{ rv.visualization }}">
+                        <h3 class="panel-title">{{ rv.title | limitTo: 25}} </h3></a>
+                </div>
+                <div class="panel-body">
+                    <div class="visualization-graph-page-content">
+
+                        <pc-visualization ng-repeat="idvisulist in [rv.visualization]" visualization-id="{{idvisulist}}" small></pc-visualization>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--
+        <table class="table table-detail table-hover">
+            <tbody>
+                <tr ng-repeat="linked in linked_event_visualization.results">
+                    <td class="table-detail-content"><a href="#!/visualizations/{{ linked.visualization }}" target="_blank">{{ linked.title }}</a></td>
+                  </tr>
+            </tbody>
+        </table>
+          -->
+
+    </div>
+
+<!--
+    <div class="row">
+        <h3 class="legend-primary">Discussion</h3>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <show-discussion ng-if="event.id" data-key="event_{{ event.id }}"></show-discussion>
+        </div>
+    </div>
+-->
+
+</div>

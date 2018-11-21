@@ -1,0 +1,179 @@
+<section>
+    <div id="top"></div>
+
+    <h4>{{ 'Import datasets from the Federated Open Data Catalogue - CEDUS' | translate}}</h4>
+	<br/>
+	<div class="row">
+		<div ng-show="cedusnodes.length>=0" class="col-sm-4">
+			<div class="input-group">		
+								
+					{{ 'Node' | translate}}:
+				
+					<div ng-repeat="node in cedusnodes">
+						<!--
+						<div ng-show="node.nodeState=='ONLINE'">
+						-->      
+						<div>
+	        			<input type="checkbox" checklist-model="nodesSelected" checklist-value="node.id">                        
+	           			<label for="{{node.id}}" tooltip-placement="right" tooltip="{{ node.title }}" tooltip-append-to-body="true">               
+	                		<span class="ellipsis">{{node.name}}</span>
+	            		</label>
+	            		</div>
+	          		</div>
+         	</div>
+		</div>
+
+		<div class="col-sm-4" ng-show="cedusnodes.length==0">
+          			{{ 'No nodes available' | translate }}
+        </div>
+          			
+    	<div class="col-sm-6">
+    		<br/> 
+    		<div class="input-group">
+	        	<input type="text" class="form-control" placeholder="{{ 'import_search_placeholder_CEDUS' | translate }}" ng-keyup="$event.keyCode == 13 && search(searchTerm)" ng-model="searchTerm"/>        
+	        	<span class="input-group-btn">
+	        		<button class="btn btn-default" type="button" ng-click="search(searchTerm)">
+	            		<span class="glyphicon glyphicon-search"></span>
+	        		</button>
+	        	</span>
+       		</div>
+    	</div>
+	</div>
+	
+    <div class="search results">
+        <div class="federateopendata-results">
+            <div ng-show="federateopendata.results.length == 0">
+                <hr/>
+                <h5>{{ 'No results found' | translate}}.</h5>
+            </div>
+           
+            <div ng-show="federateopendata.results.length > 0" class="row" >
+                <hr/>
+                <div class="search-results row-flex dataset-results-block">
+
+                      <div ng-repeat="dataset in federateopendata.results"  value="{{$index}}" ng-model="searchResults" class="result-wrapper dataset-search-results">
+                        <div class="result-block" ng-cloak>
+                            <div class="search-result">
+                                    <h5 style="color:#333">
+                                    	<a href="" ng-click="help=!help"><span class="glyphicon glyphicon-info-sign"></span></a>
+                                        {{dataset.dcat_title.value | limitTo:60}} 
+                                    </h5>
+                                    <div ng-show="dataset.datasetExpandoAttributes.length>0">
+                                    	
+								        <div ng-class="{active: help}" class="help-text-evaluation">
+								            <div class="fonticon fonticon-close" ng-click="help=!help"></div>
+								            <div>
+								            	<h5 style="color:#333">{{dataset.dcat_title.value | limitTo:60}}</h5>
+												<span ng-if="dataset.datasetEvaluation.datasetLevel" class="ds-evaluation ng-scope">
+												
+												<span class="quality-text-{{dataset.datasetEvaluation.datasetLevel}}" >{{'Dataset evaluation' | translate}}: {{dataset.datasetEvaluation.datasetLevel}}</span>
+	
+													
+													<div class="evaluation-tooltip">
+														<div class="tooltip-header ng-binding">
+															{{'Evaluation indexes' | translate}}
+														</div>
+														<div class="evaluation-container">
+															<!-- EVALUATION INDEX -->
+															<div class="evaluation semantic-index">
+																<div class="evaluation-title  ng-binding">{{'Semantic' | translate}}</div>
+													            <div class="evaluation-value">
+													            	<div class="evaluation-bar">
+													                	<div class="evaluation-bar-value quality-bar-value-{{dataset.datasetEvaluation.semanticLevel}}"></div>
+													              	</div>
+													              	<span class="evaluation-number quality-text-{{dataset.datasetEvaluation.semanticLevel}}">{{dataset.datasetEvaluation.semanticLevel}}</span>
+													            </div>
+															</div>
+												          	<!-- EVALUATION INDEX END-->
+												          	<!-- EVALUATION INDEX -->
+											          		<div class="evaluation format-index">
+											            		<div class="evaluation-title ng-binding">{{'Format' | translate}}</div>
+											            		<div class="evaluation-value">
+											              			<div class="evaluation-bar">
+											                  			<div class="evaluation-bar-value quality-bar-value-{{dataset.datasetEvaluation.formatLevel}}"></div>
+											              			</div>
+											              			<span class="evaluation-number quality-text-{{dataset.datasetEvaluation.formatLevel}}">{{dataset.datasetEvaluation.formatLevel}}</span>
+											            		</div>
+											          		</div>
+												          	<!-- EVALUATION INDEX END-->
+												          	<!-- EVALUATION INDEX -->
+											          		<div class="evaluation int-index">
+											            		<div class="evaluation-title ng-binding">{{'Internationalization' | translate}}</div>
+											            		<div class="evaluation-value">
+											              			<div class="evaluation-bar">
+											                  			<div class="evaluation-bar-value quality-bar-value-{{dataset.datasetEvaluation.internationalityLevel}}"></div>
+											              			</div>
+											              			<span class="evaluation-number quality-text-{{dataset.datasetEvaluation.internationalityLevel}}">{{dataset.datasetEvaluation.internationalityLevel}}</span>
+											            		</div>
+											          		</div>
+												          	<!-- EVALUATION INDEX END-->
+												          	<!-- EVALUATION INDEX -->
+											          		<div class="evaluation resources-index">
+												            	<div class="evaluation-title ng-binding">{{'Resources' | translate}}</div>
+												            	<div class="evaluation-value">
+												              		<div class="evaluation-bar">
+												                  		<div class="evaluation-bar-value quality-bar-value-{{dataset.datasetEvaluation.resourceAvgLevel}}"></div>
+												              		</div>
+												              		<span class="evaluation-number quality-text-{{dataset.datasetEvaluation.resourceAvgLevel}}">{{dataset.datasetEvaluation.resourceAvgLevel}}</span>
+												            	</div>
+											          		</div>
+												          	<!-- EVALUATION INDEX END-->
+												          	<!-- EVALUATION INDEX -->
+															<div class="evaluation update-index last-index">
+										            			<div class="evaluation-title ng-binding">{{'Update' | translate}}</div>
+										            			<div class="evaluation-value">
+										              				<div class="evaluation-bar">
+										                  				<div class="evaluation-bar-value quality-bar-value-{{dataset.datasetEvaluation.updateLevel}}"></div>
+										              				</div>
+										              				<span class="evaluation-number quality-text-{{dataset.datasetEvaluation.updateLevel}}">{{dataset.datasetEvaluation.updateLevel}}</span>
+										            			</div>
+										          			</div>
+															<!-- EVALUATION INDEX END-->
+														</div>
+													</div>                                    	
+												</span>
+												</span>
+											</div>
+										</div>
+                                    	
+                                    	<div ng-repeat="atribute in dataset.datasetExpandoAttributes">
+                                    		<div ng-show="atribute.attrValue && atribute.attrName=='istimeserie'">{{'Is time series' | translate}}</div>
+                                    	</div>
+                                    </div>
+                                    
+                                    <p>{{ dataset.dcat_description.value | limitTo:700}}</p>
+                                    									
+										<div class="dropdown" dropdown>
+                                        <button class="btn dropdown-toggle dropdown-button " dropdown-toggle>
+                                            {{ 'Select Resource' | translate }}
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" style="cursor:pointer">
+                                            <li ng-repeat="resource in dataset.dcat_distributions ">
+                                                <a ng-if="validType(resource.dcat_format.value, ['xls','csv','xlsx'])" ng-click="loadResourceCEDUS(dataset, dataset, resource)">
+                                                    {{ resource.dcat_title.value }} ({{resource.dcat_format.value}})
+                                                </a>
+                                                <!--
+                                                <a ng-href="{{resource.dcat_accessUrl.value}}">{{resource.dcat_accessUrl.value}}</a>
+                                                -->
+                                                <a ng-if="!validType(resource.dcat_format.value, ['xls','csv','xlsx'])" ng-click="not_valid(resource.dcat_format.value)">[{{ 'Not a valid format' | translate }}] - {{ resource.dcat_title.value }} ({{resource.dcat_format.value}}) </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+
+
+                        </div>
+                     </div>
+                </div>
+
+            <div style="text-align: center">
+           
+                <pagination ng-show="federateopendata.results.length>0" total-items="totalitemsfederated" ng-change="onPageChange()" items-per-page="itemsPerPage" ng-model="currentPage" max-size="5" class="pagination-sm" style="float: inherit;" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
+
+            </div>
+        </div>
+    </div>
+</section>

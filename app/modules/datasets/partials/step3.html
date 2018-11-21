@@ -1,0 +1,56 @@
+<dataset-create-wrapper>
+    <dataset-create-header dataset="dataset" step="3" before-next-step="nextStep()"></dataset-create-header>
+    <div>
+        <div class="dataset-filter clearfix">
+            <h5>{{ 'Time Resolution' | translate }}</h5>
+            <span ng-show="dataset.subscriptionId">
+            	{{timeResolution.output[0].name}}
+            </span>
+            <span ng-show="!dataset.subscriptionId">
+            	<div class="dataset-select" isteven-multi-select input-model="timeResolution.input" output-model="timeResolution.output" selection-mode="single" button-label="name" item-label="name" tick-property="ticked"></div>
+            </span>
+        </div>
+    </div>
+
+    <div ng-if="timeResolution.output">
+		<form name="resolutionForm">
+        <div class="dataset-filter clearfix">
+            <div class="row">
+                <div class="col-lg-6" ng-class="{'has-error': resolutionForm.$invalid}">
+                    <label>{{ 'Start Date' | translate }}: </label>
+                    <span ng-show="dataset.subscriptionId">
+                    	{{time.start}}
+                    </span>
+                    <span ng-show="!dataset.subscriptionId">
+                    	<input type="text" placeholder="{{ timeResolution.output[0].placeholder }}" ng-model="time.start">
+                    </span>                    
+                    <input ng-show="false" ng-pattern="timeResolution.output[0].regexp" type="text" id="hiddenstart" name="hiddenstart" ng-model="time.start">
+                    <span class="help-block" ng-show="!resolutionForm.hiddenstart.$valid">
+                		{{ 'Invalid date format! Use' | translate }} {{ timeResolution.output[0].placeholder }}
+            		</span>                    
+                </div>
+                <div class="col-lg-6" ng-class="{'has-error': resolutionForm.$invalid}">
+                    <label>{{ 'End Date' | translate }}: </label>
+                    <span ng-show="dataset.subscriptionId">
+                    	{{time.end}}
+                    </span>
+                    <span ng-show="!dataset.subscriptionId">
+                    	<input type="text" placeholder="{{ timeResolution.output[0].placeholder }}" ng-model="time.end">
+                    </span>                    
+                    <input ng-show="false" ng-pattern="timeResolution.output[0].regexp" type="text" id="hiddenend" name="hiddenend" ng-model="time.end">
+                    <span class="help-block danger" ng-show="!resolutionForm.hiddenend.$valid">
+                		{{ 'Invalid date format! Use' | translate }} {{ timeResolution.output[0].placeholder }}
+            		</span>                    
+                </div>
+            </div>           
+        </div>
+        </form>
+    </div>
+    <br />
+	
+	<div ng-show="!dataset.subscriptionId">
+		<hot-table settings="inputTable.settings" datarows="inputTable.items" height="500"></hot-table>	
+	</div>
+    
+
+</dataset-create-wrapper>

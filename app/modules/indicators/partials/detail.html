@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="content-header">
+        <h1 class="fonticon fonticon-indicator">{{ indicator.name }}</h1>
+
+        <div class="pc-visualization-formcontrols">
+            <div class="button-group">
+                <a type="button" class="btn btn-primary btn-create" ng-if="userState.loggedIn && (userState.userPath == indicator.creator_path || userState.isAdmin)" href="#!/indicators/{{ indicator.id }}/edit">Edit</a>
+                <a type="button" class="btn btn-danger btn-clear" ng-if="userState.loggedIn && (userState.userPath == indicator.creator_path || userState.isAdmin)" ng-click="deleteIndicator(indicator)">Delete</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="metadata metadata-event metadata-event-description">
+            <div class="form-group form-group-description">
+                <div class="form-item" ngshow="indicator.description">
+                    <div class="field-label">Description</div>
+                    <div class="field-content">{{indicator.description}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3 class="legend-primary">Details</h3>
+
+        <div class="metadata metadata-event">
+
+
+            <div class="form-group form-group-modified">
+                <div class="form-item " ng-show="indicator.date_created">
+                    <div class="field-label">Added</div>
+                    <div class="field-content">{{ indicator.date_created | date:'longDate' }}</div>
+                </div>
+                <div class="form-item" ng-show="indicator.date_modified">
+                    <div class="field-label">Modified</div>
+                    <div class="field-content">{{ indicator.date_modified | date:'longDate' }}</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="metadata metadata-event">
+            <div class="form-group form-group-rating">
+                <div class="form-item">
+                    <div class="field-label">Rating</div>
+                    <div class="field-content">
+                        <pc-rating ng-if="indicator.id" rating-id="indicator_{{indicator.id}}"></pc-rating>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

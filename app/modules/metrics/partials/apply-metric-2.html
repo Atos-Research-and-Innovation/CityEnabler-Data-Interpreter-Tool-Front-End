@@ -1,0 +1,67 @@
+<div class="container">
+    <div class="content-header">
+        <h3 class="fonticon fonticon-formula">Apply Metric</h3>
+
+        <div class="subtitle-help">
+            <h4>
+                <div class="fonticon fonticon-help help-switch" ng-click="help=!help"></div>
+                Step 2 - Add Metadata
+            </h4>
+            <div ng-class="{active: help}" class="help-text">
+                <div class="fonticon fonticon-close" ng-click="help=!help"></div>
+                <p>You can apply a metric using this wizard. The result will be a dataset.</p>
+
+                <p>
+                    To apply a metric you need to:</br>
+                In step 1:
+                <ul>
+                    <li>Choose a dataset for each indicator in your metric</li>
+                    <li>Posible Datasets are shown in the table underneath the formula </li>
+                </ul>
+                <b>In step 2:</b>
+                <ul>
+                    <li>Add some metadata to your new dataset</li>
+                    <li>save metric</li>
+                </ul>
+                </p>
+            </div>
+        </div>
+
+        <div class="pc-visualization-formcontrols">
+            <div class="button-group">
+                <a class="btn btn-default btn-save" ng-if="!user.state.loggedIn" ng-click="goToLogin()" ng-class="{'disabled' : !datasetForm.$valid }">Login to Apply</a>
+                <a class="btn btn-dataset" ng-if="user.state.loggedIn" ng-click="submit(true);" ng-class="{'disabled' : !datasetForm.$valid }">Save and apply metric again</a>
+                <a class="btn btn-save" ng-if="user.state.loggedIn" ng-click="submit(false);" ng-class="{'disabled' : !datasetForm.$valid }">Save and go to Dataset</a>
+                <a class="btn btn-danger btn-clear" ng-click="abort();">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="metadata metadata-formula">
+        <form name="datasetForm" class="simple-form" novalidate>
+            <div class="form-group" ng-class="{ 'has-error': (datasetForm.title.$invalid && !datasetForm.title.$pristine) || servererror.title }">
+                <label for="title" class="field-label">Title</label>
+
+                <div class="field-content">
+                    <input ng-model="applyHelper.data.title" type="text" name="title" class="form-control" required>
+
+                    <p ng-show="datasetForm.title.$error.required && !datasetForm.title.$pristine" class="help-block">This field is required</p>
+
+                    <p ng-show="servererror.title" class="help-block">{{ servererror.title[0] }}</p>
+
+                    <p ng-hide="servererror.title || (datasetForm.title.$error.required && !datasetForm.title.$pristine)" class="help-block">Please add a title for the new dataset</p>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error': datasetForm.unit_id.$dirty && datasetForm.unit_id.$invalid}">
+                <label for="unit_id" class="field-label">Unit</label>
+
+                <div class="field-content">
+                    <select class="form-control unit-options" ng-model="applyHelper.data.unit_id" data-category="applyHelper.unit_category_id" id="unit_id" required>
+                    </select>
+
+                    <p ng-hide="servererror.unit_id || (datasetForm.unit_id.$error.required && !datasetForm.unit_id.$pristine)" class="help-block">Please select the unit for the new dataset</p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

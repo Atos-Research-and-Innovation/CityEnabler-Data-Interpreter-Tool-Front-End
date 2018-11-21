@@ -1,0 +1,115 @@
+<header data-ng-controller="UserState">
+    <!-- navbar -->
+    <div class="container">
+    	<a name="maintop" id="maintop"></a>
+        <div class="navbar-header">
+            <button id="btn-navbar-toggle" type="button" ng-click="navCollapsed = !navCollapsed" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
+                <span class="icon-bar"></span> <span class="icon-bar"></span></button>
+        </div>
+
+        <div class="logo-wrapper" id="logo-wrapper">
+            <a href="#!/" ng-click="collapseCreateMenu();i=0" id="logo"><img src="img/logoCedus.png" alt="Cedus's Logo"></a>
+
+            <div collapse="navCollapsed" class=" collapse sign-in-wrapper ng-cloak main-menu-wrap" ng-cloak>
+                <ul class="main-menu" id="main-menu">
+                    <li>
+                        <a id="createLink" href="" ng-click="i=1" data-hover="Create" class="fonticon fonticon-create">Create</a>
+                    </li>
+                    <li>
+                        <a href="#!/browse" data-hover="Browse" ng-click="i=0" class="fonticon fonticon-search">Browse</a>
+                    </li>
+                    <!--
+                    <li>
+                        <a href="#!/i-want-to" data-hover="I want to" ng-click="i=0" class="fonticon fonticon-want">I want to</a>
+                    </li>
+                    -->
+                    <!--
+                    <li>
+                        <a href="#!/request" data-hover="Request" ng-click="i=0" class="fonticon fonticon-request">Request</a>
+                    </li>
+                    -->
+                    <!--
+                    <li>
+                        <a href="#!/how-it-works" data-hover="How It Works" ng-click="i=0" class="fonticon fonticon-how">How It Works</a>
+                    </li>
+                    -->
+                    <!--
+                    <li>
+                        <a href="https://project.policycompass.eu" data-hover="About" ng-click="i=0" class="fonticon fa-info-circle" target="_blank">About</a>
+                    </li>
+                    -->  
+                    <li ng-hide="authState.loggedIn!==undefined && authState.loggedIn">
+                        <a href="{{cedusloginurl}}" ng-click="i=0" class="fonticon font-icon-log_in normal">Login</a>
+                    </li>
+                    <!--
+                    <li ng-show="authState.loggedIn!==undefined && !authState.loggedIn">
+                        <a href="#!/login" ng-click="i=0" class="fonticon font-icon-log_in normal">Login</a>
+                    </li>
+                    <li ng-show="authState.loggedIn!==undefined && !authState.loggedIn">
+                        <a href="#!/register" ng-click="i=0" class="fonticon font-icon-sign_up normal">Signup</a>
+                    </li>
+                    -->
+                    <li ng-show="authState.loggedIn!==undefined && authState.loggedIn">
+                        <a ng-click="i=6" href="" data-hover="" class="fonticon fonticon-user normal">
+                            <span>{{authState.userData.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.logo-wrapper -->
+    </div>
+
+    <div class="submenu submenu-create" id="submenu-create" ng-class="{active: i==1}" ng-click="i=0">
+        <div class="submenu-bk">
+            <ul>
+                <li><a href="#!/datasets/create" class="fonticon font-icon-datasets" ng-click="i=0">Upload Datasets</a></li>
+                <!--
+                <li>
+                    <a href="#!/stories/create" class="fonticon font-icon-stories" ng-click="i=0">Create Story</a>
+                </li>
+                -->
+                <!--
+                <li><a href="#!/metrics/create-1" class="fonticon font-icon-metrics" ng-click="i=0">Combine Datasets</a></li>
+                -->
+                <!--
+                <li>
+                    <a href="#!/events/search" class="fonticon font-icon-historical_events" ng-click="i=0">Register Historical Events</a>
+                </li>
+                -->
+                <li>
+                    <a href="#!/events/create" class="fonticon font-icon-historical_events" ng-click="i=0">Register Historical Events</a>
+                </li>
+                <li>
+                    <a href="#!/visualizations/create" class="fonticon font-icon-visualisation" ng-click="i=0">Visualise Data</a>
+                </li>
+                <!--
+                <li>
+                    <a href="#!/models/create" class="fonticon font-icon-causal_models" ng-click="i=0">Create Causal Models</a>
+                </li>
+                -->
+            </ul>
+        </div>
+    </div>
+
+    <div class="submenu submenu-user" id="submenu-user" ng-class="{active: i==6}" ng-click="i=0">
+        <div class="submenu-bk">
+            <ul ng-click="i=0">
+                <li ng-if="!authState.loggedIn" ng-cloak>
+                <a href="#!/register" data-hover="Sign Up" class="fonticon font-icon-sign_up" ng-click="i=0">Sign Up</a>
+                </li>
+                <li id="btn-login" ng-if="!authState.loggedIn" ng-cloak>
+                <a href="#!/login" class="fonticon font-icon-log_in" ng-click="i=0">Log In</a></li>
+                <li ng-if="authState.loggedIn" ng-cloak>
+                <a href class="fonticon font-icon-log_out" ng-click="i=0;auth.logout()">Logout ({{ authState.userData.name }})</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+<!--
+    <open-feedback-modal></open-feedback-modal>
+-->
+    <!-- /.container -->
+    <!-- LandingPageContent -->
+</header>

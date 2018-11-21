@@ -1,0 +1,50 @@
+<div class="container container-create-visualisation" id="container-create-visualisation">
+    <div class="content-header">
+        <h3 ng-if="mode == 'create'" class="fonticon fonticon-indicator">Define a New Indicator</h3>
+
+        <h3 ng-if="mode == 'edit'" class="fonticon fonticon-indicator">Edit Indicator</h3>
+
+        <div class="subtitle-help">
+            <h4>
+                <div class="fonticon fonticon-help help-switch" ng-click="help=!help"></div>
+                <span ng-if="mode == 'edit'">{{ indicator.name }}</span>
+                <span ng-if="mode == 'create'">Enter the Indicator data</span>
+
+            </h4>
+            <div ng-class="{active: help}" class="help-text">
+                <div class="fonticon fonticon-close" ng-click="help=!help"></div>
+                <p>Indicator herlp.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="pc-visualization-formcontrols">
+        <div class="form-group pull-left">
+            <a href="#!/login" ng-if="!userState.loggedIn" class="btn btn-default btn-save" target="_blank">Login to Save</a>
+            <a href="" id="saveButton" ng-disabled="indicatorForm.$invalid" ng-if="userState.loggedIn" class="btn btn-default btn-save" ng-click="save()">Save</a>
+            <a type="button" class="btn btn-danger" href="#!/indicators/{{ indicator.id }}">Cancel</a>
+        </div>
+    </div>
+
+    <div class="content-body">
+        <form name="indicatorForm" role="form">
+            <div class="row">
+                <div class="col-lg-8">
+                    <fieldset>
+                        <legend>Details</legend>
+                        <div class="form-group" ng-class="{'has-error': indicatorForm.title.$dirty && indicatorForm.title.$invalid}">
+                            <label for="title">Name *</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Indicator Name" ng-model="indicator.name" ng-minlength="3" required>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': indicatorForm.description.$dirty && indicatorForm.description.$invalid}">
+                            <label for="indicator-description" class="">Description *</label>
+                            <textarea class="form-control" rows="8" id="indicator-description" name="indicator-description" ng-model="indicator.description" required></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

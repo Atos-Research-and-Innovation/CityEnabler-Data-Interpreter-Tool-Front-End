@@ -1,0 +1,147 @@
+<div class="container container-create-visualisation" id="container-create-visualisation">
+    <div class="content-header">
+        <h3 ng-if="mode == 'create'" class="fonticon fonticon-event">{{ 'Create a New Event' | translate }}</h3>
+
+        <h3 ng-if="mode == 'edit'" class="fonticon fonticon-event">{{ 'Edit Event' | translate }}</h3>
+
+        <div class="subtitle-help">
+            <h4>
+                <div class="fonticon fonticon-help help-switch" ng-click="help=!help"></div>
+                {{ 'Event Data' | translate }}
+            </h4>
+            <div ng-class="{active: help}" class="help-text">
+                <div class="fonticon fonticon-close" ng-click="help=!help"></div>
+                <p>{{ 'You can create an event using this form.' | translate }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="pc-visualization-formcontrols">
+        <div class="button-group">
+            <div style="float:left" ng-show="canDraft">
+                <toggle-switch html="true" ng-model="event.is_draft" on-label="{{ 'Draft' | translate }}" off-label="{{ 'Public' | translate }}" class="switch-danger" ></toggle-switch>
+                &nbsp;
+            </div>
+            <!--
+            <a type="button" class="btn btn-default btn-map" ng-click="saveParameters()" href="#!/events/search">Browse for Events</a>
+            -->
+
+            <a href="#!/login" ng-if="!userState.loggedIn" class="btn btn-default btn-save" target="_blank">{{ 'Login to Save' | translate }}</a>
+            <a href="" id="saveButton" ng-disabled="eventForm.$invalid" ng-if="mode == 'create' && CanSaveEvent" class="btn btn-default btn-save" ng-click="createEvent()">{{ 'Save' | translate }}</a>
+            <a href="" id="saveButton" ng-disabled="eventForm.$invalid" ng-if="mode == 'edit' && CanSaveEvent" class="btn btn-default btn-save" ng-click="createEvent()">{{ 'Save' | translate }}</a>
+            <a href="" ng-hide="mode=='create'" id="saveButton" ng-disabled="eventForm.$invalid" ng-if="userState.loggedIn && (!CanSaveEvent)" class="btn btn-default btn-save" ng-click="createEvent()">{{ 'Save a Copy' | translate }}</a>
+            <a type="button" id="cancelButton" class="btn btn-danger" ng-click="goBackButton()">{{ 'Cancel' | translate }}</a>
+            </button>
+        </div>
+    </div>
+
+    <div class="content-body">
+        <form name="eventForm" role="form" novalidate>
+            <div class="row">
+                <div class="col-lg-4">
+                    <h4>{{ 'Main Details' | translate }}</h4>
+
+                    <div class="form-group" ng-class="{'has-error': eventForm.title.$dirty && eventForm.title.$invalid}">
+                        <label for="title">{{ 'Title' | translate }} *</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="{{ 'Event Title' | translate }}" ng-model="event.title" ng-minlength="3" required>
+                    </div>
+
+                    <div class="form-group" ng-class="{'has-error': eventForm.keywords.$dirty && eventForm.keywords.$invalid}">
+                        <label for="keywords">{{ 'Keywords' | translate }} *</label>
+                        <input type="text" class="form-control" id="keywords" placeholder="{{ 'Keywords' | translate }}" ng-model="event.keywords" required>
+                    </div>
+					<!--
+                    <div class="form-group">
+                        <label for="spatials">{{ 'Locations' | translate }} *</label>
+                        <div id="spatials" class="reference-selection pc-reference-selection-full" resource="Individual" selection-mode="multiple" output="spatials.output" input="spatials.input" parameters="{ class: 'Country' }"></div>
+                    </div>
+					-->
+                    <div class="form-group" ng-class="{'has-error': eventForm.detailsURL.$dirty && eventForm.detailsURL.$invalid}">
+                        <label for="detailsURL">{{ 'Details URL' | translate }}</label>
+                        <input type="url" class="form-control" id="detailsURL" name="detailsURL" placeholder="http://www.datasource.example" ng-model="event.detailsURL">
+                    </div>
+
+                    <div class="form-group">
+						<label for="organizationsList">{{ 'Organization' | translate }} *</label>	                                    
+						<div class="dataset-select" isteven-multi-select input-model="organizationsList" output-model="outputorganizationsList" selection-mode="single" button-label="name" item-label="name" tick-property="ticked" required></div>
+					</div>                    
+
+                </div>
+                <div class="col-lg-8">
+
+                    <h4>&nbsp;</h4>
+
+                    <div class="form-group" ng-class="{'has-error': eventForm.eventdescription.$dirty && eventForm.eventdescription.$invalid}">
+                        <label for="eventdescription" class="">{{ 'Description' | translate }} *</label>
+                        <textarea class="form-control" rows="10" id="eventdescription" name="eventdescription" ng-model="event.description" required></textarea>
+                    </div>
+
+                    <div class="form-group" ng-class="{'has-error': eventForm.startEventDate.$dirty && eventForm.startEventDate.$invalid}" >
+                        <div class="col-lg-6">
+                            <div class="form-group date-picker" ng-controller="DateController">
+                                <label for="startEventDate">{{ 'Start Date of Event' | translate }} *</label>
+
+
+                                <p class="input-group">
+                                    <input type="text" id="startEventDate" name="startEventDate" class="form-control" datepicker-popup="{{ format }}" ng-model="event.startEventDate" is-open="opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" show-button-bar="false" ng-required="true" close-text="Close" required/>
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default" ng-click="open($event)">
+                                                    <i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group date-picker" ng-controller="DateController">
+                                <label for="endEventDate">{{ 'End Date of Event' | translate }} *</label>
+
+                                <p class="input-group">
+                                    <input type="text" id="endEventDate" name="endEventDate" class="form-control" datepicker-popup="{{ format }}" ng-model="event.endEventDate" is-open="opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" show-button-bar="false" ng-required="true" close-text="Close" required/>
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default" ng-click="open($event)">
+                                                    <i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+					<!--
+                    <div class="form-group col-lg-6" ng-class="{'has-error': eventForm.languageID.$dirty && eventForm.languageID.$invalid}">
+                        <label for="languageID">{{ 'Language' | translate }} *</label>
+                        <div id="languageID"
+                            class="reference-selection-form pc-reference-selection-full"
+                            resource="Language" selection-mode="single"
+                            ng-model="event.languageID" required>
+                        </div>
+                    </div>
+					-->
+
+                    <div class="form-group col-lg-6" ng-class="{'has-error': eventForm.policyDomains.$dirty && eventForm.policyDomains.$invalid}">
+                        <label for="policyDomains">{{ 'Policy Domains' | translate }} *</label>
+                        <div id="policyDomains"
+                            class="reference-selection-form pc-reference-selection-full"
+                            resource="PolicyDomain"
+                            ng-model="event.policy_domains" required>
+                        </div>
+                    </div>
+                    
+
+
+                </div>
+
+            </div>
+
+            <!--
+            <div class="row">
+                <div class="col-lg-12 pc-event-formcontrols">
+                    <div class="form-group pull-right">
+                        <button type="submit" ng-disabled="eventForm.$invalid" class="btn btn-default"
+                                ng-click="createEvent()"><span class="glyphicon glyphicon-floppy-disk"></span> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+            -->
+        </form>
+    </div>
+</div>

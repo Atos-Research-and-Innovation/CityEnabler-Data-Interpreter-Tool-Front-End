@@ -1,0 +1,266 @@
+
+<div ng-show="!DataLoaded" class="container">
+    <div class="loading-container">
+        <div class="loading"></div>
+        <div id="loading-text">loading</div>
+    </div>
+</div>
+
+<div ng-show="DataLoaded && !CanViewItem" class="container">
+	<br/>
+	<div class="form-custom-instructions">
+		{{ "You don't have enough permissions to view this content" | translate }}
+	</div>
+	<br/>
+</div>
+
+<div ng-show="DataLoaded && CanViewItem" class="container">
+    
+    <div class="content-header">
+        <h1 class="fonticon fonticon-visualisation">{{ visualization.title }}</h1>
+
+        <div class="pc-visualization-formcontrols">
+			<!--
+            <edit-buttons data-userpath="{{visualization.creator_path}}" data-editurl="#!/visualizations/{{visualization.id}}/edit" data-deletefunction="deleteCurrentVisualisation"></edit-buttons>
+            -->
+            <a type="button" class="btn btn-primary  btn-create" ng-show="visualization.id" href="#!/visualizations/{{ visualization.id }}/edit">{{ 'Edit' | translate }}</a>
+            <a type="button" class="btn btn-danger  btn-clear"  ng-if="CanDeleteVisualization"  ng-click="deleteCurrentVisualisation(visualization)">{{ 'Delete' | translate }}</a>
+            
+            <!--
+            <a type="button" ng-show="visualization.id" ng-if="!user.state.isAdmin && user.state.userPath!=visualization.creator_path" class="btn btn-primary btn-create" href="#!/visualizations/{{ visualization.id }}/edit">{{ 'Edit' | translate }}</a>
+            -->
+            <a href="#" ng-if="visualization.is_draft" ng-disabled="visualization.is_draft" class="btn btn-default btn-danger">{{ 'Draft' | translate }}</a>
+            <!--
+            <a type="button" class="btn btn-primary btn-addCausalModel" href="#!/models/create?{{urlListIndicators}}">Create Causal Model</a>
+            -->
+            <a type="button" ng-if="!visualization.is_draft" class="btn btn-share" ng-click="enableshare()" ng-class="{active: share}" >{{ 'Share' | translate }}</a>
+			<pc-export ng-if="visualization.id" type="visualizations" export-id="visualizations_{{visualization.id}}"></pc-export>
+			
+        </div>
+
+        <div ng-class="{active: share}" class="share-window" id="share-window" ng-init="e=2">
+            <ul class="share-menu">
+                <div class="fonticon fonticon-close" ng-click="share=!share"></div>
+                <!--
+                <li><a href="" ng-click="e=1" ng-class="{active: e==1}">Share</a></li>
+                -->
+                <li><a href="" ng-click="e=2" ng-class="{active: e==2}">Embed</a></li>
+                <!--
+                <li><a href="" ng-click="e=3" ng-class="{active: e==3}">Json</a></li>
+                -->
+            </ul>
+            
+            <div ng-class="{active: e==1}" class="share-submenu">
+                <div class="row-block">
+                	<!--
+                    <ul class="social-share">
+                        <li><a href="" class="fonticon fonticon-facebook"></a></li>
+                        <li><a href="" class="fonticon fonticon-twitter"></a></li>
+                        <li><a href="" class="fonticon fonticon-vk"></a></li>
+                        <li><a href="" class="fonticon fonticon-linkedin"></a></li>
+                        <li><a href="" class="fonticon fonticon-google"></a></li>
+                    </ul>
+                   -->
+                    <input type="text" value="{{ location.absUrl() }}">
+                </div>
+            </div>
+            
+            <div ng-class="{active: e==2}" class="share-submenu">
+                <div class="row-block">
+                	<ul>
+                		<li>URL (normal size): <a ng-href="{{urliframe}}" target="_blank">{{urliframe}}</a></li>
+                		<li>URL (small size): <a ng-href="{{urliframesmall}}" target="_blank">{{urliframesmall}}</a></li>
+                	</ul>
+                </div>	
+                <div class="row-block">
+                    Iframe: <input type="text" value='<iframe width="510" height="400" scrolling="yes" frameborder="no" src="{{ urliframe }}"></iframe>'>
+                </div>
+            </div>
+            
+            <div ng-class="{active: e==3}" class="share-submenu">
+                <div class="row-block">
+                    <a ng-href="{{jsonurl}}" target="_blank">{{jsonurl}}</a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div>
+        <div class="visualisation-dat right-column">
+            <pc-visualization ng-if="visualization.id" visualization-id="{{visualization.id}}"></pc-visualization>
+        </div>
+        <br/>
+
+        <div class="row">
+
+            <div class="metadata metadata-event metadata-event-description">
+                <div class="form-group form-group-description" ngshow="event.description">
+                    <div class="field-label">{{ 'Description' | translate }}</div>
+                    <div class="field-content">{{visualization.description}}</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <h3 class="legend-primary">{{ 'Details' | translate }}</h3>
+            <!-- FIELDS START -->
+            <div class="metadata metadata-event">
+
+                <div class="form-group form-group-keywords" ng-if="visualization.keywords">
+                    <div class="field-label">{{ 'Keywords' | translate }}</div>
+                    <div class="field-content">{{visualization.keywords}}</div>
+                </div>
+
+                <div class="form-group form-group-keywords" ng-if="visualization.policy_domains.length>0">
+                    <div class="field-label">{{ 'Policy Domains' | translate }}</div>
+                    <div class="field-content">
+                        <div ng-repeat="policydomain in visualization.policy_domains">
+                            <span ng-if="policydomain" resolve-policydomain id="policydomain"></span></div>
+                    </div>
+                </div>
+
+                <div class="form-group form-group-modified">
+                    <div class="form-item" ng-if="visualization.creator_path">
+                        <div class="field-label">{{ 'Added by' | translate }}</div>
+                        <div class="field-content">
+                        	{{visualization.creator_path}}
+                        	<!--
+                            <username userpath="{{visualization.creator_path}}"></username>
+                           -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-item" ng-if="visualization.organization">
+                        <div class="field-label">{{ 'Organization' | translate }}</div>
+                        <div class="field-content"><span class="plotorganizationname" id="visualization.organization"></span></div>
+                    </div>
+                   </div> 
+                   <div class="form-group form-group-modified">
+                    <div class="form-item" ng-if="visualization.date_created">
+                        <div class="field-label">{{ 'Added' | translate }}</div>
+                        <div class="field-content">{{ visualization.date_created | date:'longDate' }}</div>
+                    </div>
+                    <div class="form-item" ng-if="visualization.date_modified">
+                        <div class="field-label">{{ 'Modified' | translate }}</div>
+                        <div class="field-content">{{ visualization.date_modified | date:'longDate' }}</div>
+                    </div>
+                </div>
+				
+				<!--
+                <div class="form-group form-group-location">
+                    <div class="form-item">
+                        <div class="field-label">{{ 'Language' | translate }}</div>
+                        <div class="field-content">
+                            <span ng-if="visualization.language_id" resolve-language id="visualization.language_id"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-item" ng-if="visualization.location">
+                        <div class="field-label">{{ 'Location' | translate }}</div>
+                        <div class="field-content">
+                            <span ng-if="visualization.location" resolve-individual id="visualization.location"></span>
+                        </div>
+                    </div>
+
+                </div>
+                -->
+            </div>
+
+            <div class="metadata metadata-event">
+
+                <div class="form-group form-group-datasets form-group-external">
+                    <div class="form-item">
+                        <div class="field-label">{{ 'Datasets' | translate }}</div>
+                        <div class="field-content">
+                            <div ng-repeat="metric in meticsRelated">
+                                <a ng-href="#!/datasets/{{metric.id}}">{{metric.title}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-events form-group-external" ng-if="visualization.historical_events_in_visualization">
+                    <div class="form-item">
+                        <div class="field-label">{{ 'Historical Events' | translate }}</div>
+                        <div class="field-content">
+                            <div ng-repeat="her in historicalEventsRelated">
+                                <div class='square-box'>
+                                    <div class='square-content' style="background:{{her.color}};">
+                                        <div><span>&nbsp;</span></div>
+                                    </div>
+                                </div>
+                                <a ng-href="#!/events/{{her.event_id}}">{{her.title}}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div ng-if="visualization.derived_from_id" class="form-group form-group-link">
+                    <div class="form-item">
+                        <div class="field-label">{{ 'Derived from' | translate }}</div>
+                        <div class="field-content">
+                            <a ng-if="originalvisualization.id" href="#!/visualizations/{{visualization.derived_from_id}}">{{origianlVisualisationTitle}}</a>
+                            <span ng-if="!originalvisualization.id">{{origianlVisualisationTitle}}</span>
+                        </div>
+                    </div>
+                    <div class="form-item" ng-if="originalvisualization.creator_path">
+                        <div class="field-label">{{ 'Added by' | translate }}</div>
+                        <div class="field-content">
+                            <username userpath="{{originalvisualization.creator_path}}"></username>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group form-group-visualisations form-group-external" ng-if="relatedVisualizations.length>0">
+                    <div class="form-item">
+                        <div class="field-label">{{ 'Related Visualisations' | translate }}</div>
+                        <div class="field-content">
+                            <div ng-repeat="rv in relatedVisualizations">
+                                <a ng-href="#!/visualizations/{{rv.visualization_id}}">{{rv.title}}</a></div>
+                        </div>
+                    </div>
+                </div>
+				<!--
+                <div class="form-group form-group-fcms form-group-external" ng-if="fcmRelated.length>1">
+                    <div class="form-item">
+                        <div class="field-label">Related Causal Models</div>
+                        <div class="field-content">
+                            <div ng-repeat="fcm in fcmRelated"><a ng-href="#!/models/{{fcm.id}}">{{fcm.title}}</a></div>
+                        </div>
+                    </div>
+                </div>
+				-->
+            </div>
+            <!--
+            <div class="metadata metadata-event">
+                <div class="form-group form-group-rating">
+                    <div class="form-item">
+                        <div class="field-label">Rating</div>
+                        <div class="field-content">
+                            <pc-rating ng-if="visualization.id" rating-id="visualization_{{visualization.id}}"></pc-rating>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			-->
+            <!-- FIELDS END -->
+
+        </div>
+<!--
+        <div class="row">
+            <h3 class="legend-primary">Discussion</h3>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <show-discussion ng-if="visualization.id" data-key="visualization_{{ visualization.id }}"></show-discussion>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 ags-add-button">
+                <a type="button" class="btn btn-primary btn-ags pull-right" href="#!/ags/create?discussion=visualization_{{ visualization.id }}">Create Argument Graph</a>
+            </div>
+        </div>
+    </div>
+-->
+
+</div>

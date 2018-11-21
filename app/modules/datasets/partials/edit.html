@@ -1,0 +1,170 @@
+<div class="container container-edit-dataset" id="container-edit-dataset">
+
+    <div class="content-header">
+        <h3 class="fonticon fonticon-dataset">{{ 'Edit' | translate }} {{ dataset.title }}</h3>
+    </div>
+
+    <div class="pc-visualization-formcontrols">
+        <div style="float:left" ng-show="canDraft && !stepData.next">
+            <toggle-switch html="true" ng-model="dataset.is_draft" on-label="{{ 'Draft' | translate }}" off-label="{{ 'Public' | translate }}" class="switch-danger" ></toggle-switch>
+            &nbsp;
+        </div>
+
+        <div class="button-group">
+            <a href="#!/login" ng-if="!userState.loggedIn" class="btn btn-default btn-save" target="_blank">{{ 'Login to Save' | translate }}</a>
+            <!--
+            <a href="" id="saveButton" ng-disabled="datasetForm.$invalid" ng-if="userState.loggedIn && (userState.userPath == dataset.creator_path || userState.isAdmin)" class="btn btn-default btn-save" ng-click="save()">Save</a>
+            <a href="" id="saveButton" ng-disabled="datasetForm.$invalid" ng-if="userState.loggedIn && (userState.userPath != dataset.creator_path && !userState.isAdmin)" class="btn btn-default btn-save" ng-click="save()">Save a Copy</a>
+            -->
+            
+            
+            <!--
+            <a href="" id="saveButton" ng-if="userState.loggedIn && (userState.userPath == dataset.creator_path || userState.isAdmin)" class="btn btn-default btn-save" ng-click="save()">{{ 'Save' | translate }}</a>
+            <a href="" id="saveButton" ng-if="userState.loggedIn && (userState.userPath != dataset.creator_path && !userState.isAdmin)" class="btn btn-default btn-save" ng-click="save()">{{ 'Save a Copy' | translate }}</a>            
+            -->
+            <a href="" id="saveButton" ng-if="userState.loggedIn && CanSaveDataset" class="btn btn-default btn-save" ng-click="save()">{{ 'Save' | translate }}</a>
+            <a href="" id="saveButton" ng-if="userState.loggedIn && (!CanSaveDataset)" class="btn btn-default btn-save" ng-click="save()">{{ 'Save a Copy' | translate }}</a>
+                        
+            <a type="button" class="btn btn-danger" href="#!/datasets/{{ dataset.id }}">{{ 'Cancel' | translate }}</a>
+        </div>
+    </div>
+
+    <div class="content-body">
+
+        <hot-table ng-if="showTable" settings="table.settings" datarows="table.items"></hot-table>
+        <br/>
+
+
+        <form name="datasetForm" role="form" novalidate>
+            <div class="row">
+                <div class="col-lg-4">
+                    <fieldset>
+                        <legend>{{ 'Main Details' | translate }}</legend>
+                        <div class="form-group" ng-class="{'has-error': datasetForm.title.$dirty && datasetForm.title.$invalid}">
+                            <label for="title">{{ 'Title' | translate }} *</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="{{ 'Dataset Title' | translate }}" ng-model="dataset.title" ng-minlength="3" required disabled>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': datasetForm.keywords.$dirty && datasetForm.keywords.$invalid}">
+                            <label for="keywords">{{ 'Keywords' | translate }} *</label>
+                            <input type="text" class="form-control" id="keywords" name="keywords" placeholder="{{ 'Keywords' | translate }}" ng-model="dataset.keywords" required>
+                        </div>
+                        <!--
+                        <div class="form-group">
+                            <label for="spatials">{{ 'Spatials' | translate }}</label>
+                            <div id="spatials"
+                                class="reference-selection-form pc-reference-selection-full"
+                                resource="Individual" selection-mode="multiple"
+                                parameters="{ class: 'Country' }"
+                                ng-model="dataset.spatials" required>
+                            </div>
+                        </div>
+						-->
+						<!--
+                        <div class="form-group">
+                            <label for="language">{{ 'Language' | translate }} *</label>
+                            <div id="language"
+                                class="reference-selection-form pc-reference-selection-full"
+                                resource="Language" selection-mode="single"
+                                ng-model="dataset.language_id" required>
+                            </div>
+                        </div>
+						-->
+						<!--
+                        <div class="form-group">
+                            <label for="license">{{ 'License' | translate }}</label>
+                            <div id="license"
+                                class="reference-selection-form pc-reference-selection-full"
+                                resource="License" selection-mode="single"
+                                ng-model="dataset.license_id" required>
+                            </div>
+                        </div>
+                       -->
+
+                    	<div class="form-group">
+							<label for="organizationsList">{{ 'Organization' | translate }} *</label>	                                    
+							<div class="dataset-select" isteven-multi-select input-model="organizationsList" output-model="outputorganizationsList" selection-mode="single" button-label="name" item-label="name" tick-property="ticked" required></div>
+						</div>  
+					                        
+                        
+                    </fieldset>
+                </div>
+                <div class="col-lg-8">
+                    <fieldset>
+                        <legend>{{ 'Further Information' | translate }}</legend>
+                        <div class="form-group" ng-class="{'has-error': datasetForm.description.$dirty && datasetForm.description.$invalid}">
+                            <label for="dataset-description" class="">Description *</label>
+                            <textarea class="form-control" rows="5" id="dataset-description" name="dataset-description" ng-model="dataset.description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="policy_domain">{{ 'Policy Domains' | translate }} *</label>
+                            <div id="policy_domain"
+                                class="reference-selection-form pc-reference-selection-full"
+                                resource="PolicyDomain"
+                                ng-model="dataset.policy_domains" required>
+                            </div>
+                        </div>
+                        <legend>{{ 'Resource Data' | translate }}</legend>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group date-picker" ng-controller="DateController">
+                                    <label for="retrievalDate">{{ 'Date of Retrieval' | translate }} *</label>
+                                <span class="input-group">
+                                    <input type="text" id="retrievalDate" name="retrievalDate" class="form-control" datepicker-popup="{{ format }}" ng-model="dataset.resource.issued" is-open="opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" show-button-bar="false" ng-required="false" close-text="Close"/>
+                                <span class="input-group-btn">
+                                    <a type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></a>
+                                </span>
+                                </span>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-6">
+
+                                <div class="form-group" ng-class="{'has-error': datasetForm.url.$dirty && datasetForm.url.$invalid}">
+                                    <label for="url">{{ 'URL' | translate }} *</label>
+                                    <input type="text" class="form-control" id="url" name="url" placeholder="http://eurostat.eu/1282" ng-model="dataset.resource.url" required>
+                                </div>
+
+                            </div>
+
+                        </div>
+						
+						<!--
+                        <legend>{{ 'External Resource' | translate }}</legend>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group" ng-show="!custom">
+                                    <label for="external_resource">{{ 'External Resource' | translate }} *</label>
+                                    <div id="external_resource"
+                                        class="reference-selection-form pc-reference-selection-full"
+                                        resource="ExternalResource" selection-mode="single"
+                                        ng-model="dataset.resource.external_resource" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" ng-show="custom" ng-class="{'has-error': datasetForm.custom.$dirty && datasetForm.custom.$invalid}">
+                                    <label for="custom">{{ 'Custom' | translate }}</label>
+                                    <input type="text" class="form-control" id="custom" name="custom" placeholder="Open Data XY" ng-model="dataset.resource.custom">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="form-group" ng-show="!custom">
+                                    <button class="btn btn-info pc-er-button" ng-click="toogleResource()">{{ 'Not there?' | translate }}</button>
+                                </div>
+
+                                <div class="form-group" ng-show="custom">
+                                    <button class="btn btn-info pc-er-button" ng-click="toogleResource()">{{ 'Choose from known Sources' | translate }}</button>
+                                </div>
+                            </div>
+                        </div>
+                       	-->
+                    </fieldset>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+

@@ -1,0 +1,19 @@
+<div ng-if="canDraft" style="float:left">
+<toggle-switch 
+html="true" 
+ng-model="visualization.is_draft" 
+on-label="{{ 'Draft' | translate }}" off-label="{{ 'Public' | translate }}" class="switch-danger" ></toggle-switch>
+&nbsp;
+</div>
+
+<a href="#!/login" ng-if="!user.state.loggedIn" class="btn btn-default btn-save" target="_blank">{{ 'Login to Save' | translate }}</a>
+<!--
+<a href="" ng-if="mode == 'create' && user.state.loggedIn" type="submit" data-intro="Save data" data-position="top" class="btn btn-default btn-save" ng-click="createVisualization(ListMetricsFilter)">{{ 'Save' | translate }} </a>
+<a href="" ng-if="mode == 'edit' && user.state.loggedIn" type="submit" data-intro="Save data" data-position="top" class="btn btn-default btn-save" ng-click="createVisualization(ListMetricsFilter)">{{ 'Save' | translate }} <span ng-hide="user.state.userPath==visualization.creator_path || user.state.isAdmin==true"> {{ 'a copy' | translate }}</span></a>
+-->
+<a href="" ng-if="mode == 'create' && CanSaveVisu" type="submit" data-intro="Save data" data-position="top" class="btn btn-default btn-save" ng-click="createVisualization(ListMetricsFilter)">{{ 'Save' | translate }} </a>
+<a href="" ng-if="mode == 'edit' && user.state.loggedIn" type="submit" data-intro="Save data" data-position="top" class="btn btn-default btn-save" ng-click="createVisualization(ListMetricsFilter)">{{ 'Save' | translate }} <span ng-hide="CanSaveVisu"> {{ 'a copy' | translate }}</span></a>
+
+
+<a href="" ng-show="mode=='edit'" ng-disabled="disableRevert" type="submit" data-intro="Revert data" data-position="top" class="btn btn-default btn-revert2" ng-click="revertVisualization()">{{ 'Revert' | translate }}</a>
+<a href="" type="submit" data-intro="Cancel" data-position="top" class="btn btn-default btn-danger btn-clear" ng-click="cancelVisualization()">{{ 'Cancel' | translate }}</a>

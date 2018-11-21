@@ -1,0 +1,72 @@
+<div ng-class="visualization.is_draft?'chartvisu':''">
+    <div ng-hide="list">
+        <div ng-show="isSelectedParent(1)">
+            <div ng-show="mapTimeSlider.length>1">
+                <form>
+                    <div class="slidermenu">
+                        <div class="small">
+                            <button title="Starts time serie" ng-show="showPlay" type="submit" ng-click="playBar()" class="btn btn-primary play"></button>
+                            <button title="Starts time serie" ng-show="showReplay" type="submit" ng-click="replayBar()" class="btn btn-primary play"></button>
+                            <button title="Pauses time serie" ng-show="showPause" type="submit" ng-click="pauseBar()" class="btn btn-primary pause"></button>
+                            <button title="Stops time serie" ng-show="showStop" type="submit" ng-click="stopBar()" class="btn btn-primary stop"></button>
+                        </div>
+                    </div>
+
+                    <div ng-show="mapTimeSlider.length>1">
+                    	<div><br/></div>
+                    	<rzslider rz-slider-model="rangeDatesSliderMin" rz-slider-options="slider_translate_map.options"></rzslider>
+                    	<!--
+                        <rzslider rz-slider-model="rangeDatesSliderMin" rz-slider-floor="0" rz-slider-ceil="mapTimeSlider.length-1" rz-slider-translate="translateCountrySlider"></rzslider>
+                       	-->
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div ng-show="isSelectedSon('graph_pie')">
+
+            <div ng-show="numbers2.length>1">
+                <form>
+
+                    <div class="slidermenu">
+                        <div class="small">
+                            <button title="Starts time serie" ng-show="showPlay" type="submit" ng-click="playBar()" class="btn btn-primary play"></button>
+                            <button title="Starts time serie" ng-show="showReplay" type="submit" ng-click="replayBar()" class="btn btn-primary play"></button>
+                            <button title="Pauses time serie" ng-show="showPause" type="submit" ng-click="pauseBar()" class="btn btn-primary pause"></button>
+                            <button title="Stops time serie" ng-show="showStop" type="submit" ng-click="stopBar()" class="btn btn-primary stop"></button>
+                        </div>
+                    </div>
+
+
+                    <div>
+                    	<div><br/></div>
+	                    <rzslider rz-slider-model="rangeDatesSliderMin" rz-slider-options="slider_translate_pie.options"></rzslider>
+						<!--
+                        <rzslider rz-slider-model="rangeDatesSliderMin" rz-slider-ceil="numbers2.length-1" rz-slider-translate="translate"></rzslider>
+						-->
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <center>
+        <div ng-show="isSelectedSon('graph_pie')">
+            <div class="pcPieChart" dataset="dataset" chartid="randomID" show-Legend="showLegend" small="list" mode="mode" show-Labels="showLabels"></div>
+        </div>
+
+        <div ng-show="isSelectedSon('graph_bars')">
+           	<div class="pcBarsChart" dataset="datasetToSend" events="eventsToPlot" chartid="randomID" small="list" mode="mode" show-Legend="showLegend" show-Labels="showLabels" show-Grid="showGrid" show-Together="showYAxes" show-Percentatge="showAsPercentatge" resolution="resolution.value" groupedby="groupedby.value" labelyaxe="labelYAxe"></div>
+        </div>
+        <div ng-show="isSelectedSon('graph_line')">
+           	<div class="pcLinesChart" dataset="numbers1" events="eventsToPlot" labels="labelYAxe" small="list" mode="mode" chartid="randomID" show-Legend="showLegend" show-Labels="showLabels" show-Lines="showLines" show-Areas="showAreas" show-Points="showPoints" show-Grid="showGrid" show-Together="showYAxes" show-Percentatge="showAsPercentatge" show-Astoplines="showAstoplines" resolution="resolution.value" plotdatain="plotDataIn" tickposition="plotxaxislegend" xaxeformat=""></div>
+        </div>
+
+        <div ng-hide="!isSelectedParent(1)">
+           	<div class="pcMapsChart" chartid="randomID" dataset="datasetToSendMap" small="list" mode="mode" show-Legend="showLegend" show-Zoom="showZoom" show-Bubbles="showBubbles" projection="typeToPlot" fromcountry="translateCountryValue(rangeDatesSliderMin)" tocountry="translateCountryValue(rangeDatesSliderMax)" scale-Color="scaleColor"></div>
+        </div>
+    </center>
+
+</div>

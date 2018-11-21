@@ -1,0 +1,209 @@
+<div class="modal-header dialog-header-notify ng-scope">
+    <button type="button" class="close" ng-click="cancelModalWindowDataset()">×</button>
+    <h4 class="modal-title text-info ng-binding fonticon fonticon-dataset ng-binding"> {{ 'Edit Datasets' | translate }}</h4>
+</div>
+
+<div class="modal-body text-info ng-binding ng-scope">
+    <div id="basic-modal-content-pc">
+    	
+    	<!--
+ 		<div ng-hide="hideAdvice" class="form-instructions">
+ 			<p class="text-danger">Changes will not be applied until you click over the "Apply" button!</p> 			
+ 		</div>
+ 		-->
+		
+        <tabset>
+            <tab heading="{{ 'Select Datasets' | translate }}" active="tab1" disabled="">
+            	
+            	<div ng-hide="!disabledApplyButton">
+            		<p class="text-danger">{{ 'Loading data' | translate }}.</p>	
+            	</div>
+            	
+            	
+                <div ng-hide="disabledApplyButton" class="row createvisualization">
+					<!--
+                    <div indexdataset="indexdataset" id="filterDatasets" class="selectorDatasets" datasets-list="ListMetricsFilter" number-Max-Datasets="99" functionfordataset="rePlotGraphFromSearch(actionDone,position)" disable-Row="arrayResolutionsFilter[resolution.value]"></div>
+                    -->
+                    
+					<div indexdataset="indexdataset" id="filterDatasets" class="selectorDatasets" datasets-list="ListMetricsFilterModal" number-Max-Datasets="99" functionfordataset="rePlotGraphFromSearch(actionDone,position, 'modal')" disable-Row="arrayResolutionsFilter[resolution.value]"></div>
+                </div>
+            </tab>
+            <tab heading="{{ 'Configure' | translate }}" active="tab2" disabled="">
+                <div class="row createvisualization">
+                    <div ng-show="ListMetricsFilterModal.length==0">{{ 'No dataset linked' | translate }}</div>
+                    
+                    <div class="designer-metrics active" class="designer-metrics" id="designer-metrics-num-{{metric.id}}" ng-repeat="metric in ListMetricsFilterModal track by $index">
+                        <h4 ng-show="metric.title" >{{metric.title}} - {{metric.date_created | date:'longDate' }}</h4>
+                        <h4 ng-show="!metric.title" >Deleted dataset {{metric.id}}</h4>
+
+                        <input type="hidden" ng-model="MetricSelectediId_[metric.id]" id="MetricSelectediId_{{metric.id}}" name="MetricSelectedId[]" value="">
+                        <input type="hidden" ng-model="MetricSelectediIndex_[metric.id]" ng-init="MetricSelectediIndex_[metric.id]=metric.id" id="MetricSelectediIndex_{{metric.id}}" name="MetricSelectediIndex[]" value="{{metric.id}}">
+
+                        <div class="metric-buttons">
+                            <a type="button" data-intro="Unlink dataset from the visualisation" data-position="top" class="btn btn-danger btn-clear" ng-click="deleteMetricFromList(metric.id, metric.title, ListMetricsFilterModal, $index, 'modal');" id="delete-metric-button-{{metric.id}}">{{ 'Unlink' | translate }}</a>
+                            <a ng-show="metric.title" type="button" data-intro="Access to the dataset data" data-position="right" class="btn btn-info btn-adddataset" href="#!/datasets/{{metric.id}}" target="_blank" id="view-metric-button-{{metric.id}}">{{ 'Open dataset details' | translate }}</a>
+                            <!--
+   	                        <a type="button" class="btn btn-default" href="" ng-click="applayscale[metric.id]=!applayscale[metric.id]"><span ng-if="!applayscale[metric.id]">Apply</span><span ng-if="applayscale[metric.id]">Disable</span> Custom Scale</a>
+   	                        -->
+                        </div>
+						
+						<div ng-show="metric.title">
+
+                        <div class="metric-forms">
+							<div>
+								<br>
+								<span>{{'The default dataset unit is' | translate }} "<resource-title resource="Unit" id="datasetsUnits[metric.id]" ng-if="datasetsUnits[metric.id]"></resource-title>" {{ 'but you can use a custom scale for it' | translate}}. 
+								<br><input type="checkbox" name="customscale" ng-checked="applayscale[metric.id]" ng-click="applayscale[metric.id]=!applayscale[metric.id]"> {{ 'Customize' | translate}}. </span>
+							</div>
+
+
+							<div class="well" ng-if="applayscale[metric.id]">
+								<!--
+	                        	<div>
+	                        		<br>
+									<span>The original dataset unit is "<resource-title resource="Unit" id="datasetsUnits[metric.id]" ng-if="datasetsUnits[metric.id]"></resource-title>".</span>
+	                        	</div>
+	                        	-->
+								<form name="myForm" class="form-horizontal" >
+           							<div class="form-group" ng-class="{'has-error': myForm.$invalid}">
+           								<div class="col-sm-2 text-nowrap">
+        									<label for="inputText3" class="control-label">1 <resource-title resource="Unit" id="datasetsUnits[metric.id]" ng-if="datasetsUnits[metric.id]"></resource-title> = </label>
+        								</div>
+        								<div class="col-sm-4">
+            								<input type="number" min="0" placeholder="{{ 'Scale (a number)' | translate }}" size="5" name="myDecimal" ng-model="scaleperDataset[metric.id]" ng-pattern="/^[0-9]+(\.[0-9]{1,5})?$/" step="0.00001" required />
+            								<span class="help-block" ng-show="!myForm.myDecimal.$valid">{{ 'Invalid scale number!' | translate }}</span>
+            							</div>
+            							<div class="col-sm-4">
+											<input type="text" class="" ng-model="unitperDataset[metric.id]" name="myUnit" placeholder="{{ 'Unit' | translate }}" ng-minlength="1" size="10" required maxlength="20" /></span>
+											<span class="help-block" ng-show="!myForm.myUnit.$valid || !unitperDataset[metric.id]">{{ 'Invalid unit label!' | translate }}</span>
+        								</div>
+          							</div>
+      							</form>
+	                        </div>
+                        </div>
+
+                        <div class="metric-forms">
+                            <div class="metric-form-item">
+                                <br>
+                                <!--
+                                <div ng-show="individualCombo_value_[metric.id].length/pageSizeDataset>1" class="createvisualization ">
+                                    <div class="filterMetricsPagination" id="filterMetricsPaginationDirective">
+                                        <div class="button-group">
+                                            <button ng-disabled="curPageDataset == 0" class="btn" ng-click="curPageDataset=curPageDataset-1">
+                                                <span class="glyphicon glyphicon-chevron-left"></span> Previous
+                                            </button>
+                                            <button ng-disabled="curPageDataset >= individualCombo_value_[metric.id].length/pageSizeDataset - 1" class="btn pull-right" ng-click="curPageDataset = curPageDataset+1">
+                                                Next <span class="glyphicon glyphicon-chevron-right"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+								-->
+																
+								<div ng-hide="showListIndividuals[metric.id]" class="loading-container">
+									<div class="loading"></div>
+									<div id="loading-text">{{ 'loading' | translate }} {{individualCombo_value_[metric.id].length}}/{{sizeIndividualsArray[metric.id]}}</div>
+								</div>
+
+								<div>
+									<div ng-show="showListIndividuals[metric.id]">
+										<!--
+										<div class="filterMetricsPagination" id="filterMetricsPaginationDirective">
+											<div class="button-group">
+								                <button ng-disabled="curPageDataset == 0" class="btn" ng-click="curPageDataset=curPageDataset-1">
+								                    <span class="glyphicon glyphicon-chevron-left"></span> Previous
+								                </button>
+								                <button ng-disabled="curPageDataset >= individualCombo_value_[metric.id].length/pageSizeDataset - 1" class="btn pull-right" ng-click="curPageDataset = curPageDataset+1">
+								                    Next <span class="glyphicon glyphicon-chevron-right"></span>
+								                </button>
+								            </div>
+										</div>
+										-->
+										
+	                    	
+										<div class="filterDatasetsPaginationHeader" id="filterDatasetsPaginationHeaderDirective">
+											
+											<div>
+												
+												<label ng-show="individualCombo_value_[metric.id].length>1" for="">{{individualCombo_value_[metric.id].length}} {{ 'individuals found' | translate }}</label>
+												<label ng-show="individualCombo_value_[metric.id].length==1" for="">{{individualCombo_value_[metric.id].length}} {{ 'individual found' | translate }}</label>
+												<label ng-show="individualCombo_value_[metric.id].length==0" for="">{{ 'No individuals found' | translate }}</label>
+												
+											</div>
+											
+										</div>
+										
+										<div class="filterDatasetPaginationBody createvisualization" id="filterDatasetsPaginationBodyDirective">
+											<ul class="datasets-list metrics-list ">
+												<li ng-class="{'metrics-list dataset-list active':ModalIndividualDatasetCheckboxes_[metric.id].indexOf(option.id) >= 0}" name="designer-dataset-num-{{dataset.id}}" ng-repeat="option in individualCombo_value_[metric.id] | orderBy: 'title' | pagination: (curPageDataset-1) * pageSizeDataset | limitTo: pageSizeDataset " >
+													<a ng-hide="isSelectedSon('mercator') && !option.iscountry" href="" x-ng-click="clickIndividual(metric.id, option.id);"  title="{{ ModalIndividualDatasetCheckboxes_[metric.id].indexOf(option.id) == -1 && 'Add' || 'Remove' }} ' {{option.title}}'">					
+
+														<spectrum-colorpicker
+															ng-show="isSelectedSon('graph_line') || isSelectedSon('graph_pie') || isSelectedSon('graph_bars')"
+															ng-init=" dataset_color_palete_[metric.id][option.id] = dataset_color_palete_[metric.id][option.id] == null ? colorScale(option.title) : dataset_color_palete_[metric.id][option.id] " ng-model="dataset_color_palete_[metric.id][option.id]" ng-model-onblur ng-change="changeColourIndividual()" options="{
+																						showInput: true,
+																						showAlpha: false,
+																						allowEmpty: false,																						
+																						preferredFormat: 'hex'
+																					}"></spectrum-colorpicker>
+
+															{{option.title}} &nbsp;
+													</a>
+													<span ng-show="isSelectedSon('mercator') && !option.iscountry">{{option.title}} &nbsp; ({{ 'Is not a country' | translate }})</span>
+												</li>
+											</ul>
+										</div>
+										
+										<div class="row">
+											<div style="text-align: center">
+		                    					<pagination total-items="individualCombo_value_[metric.id].length" ng-change="pageChangedDataset()" items-per-page="pageSizeDataset" ng-model="curPageDataset" max-size="pagePagesSizeDataset" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
+		                    				</div>
+	                    				</div>
+	                    				
+									</div>
+								</div>
+
+								<!--
+                                <table ng-show="individualCombo_value_[metric.id].length>0">
+                                    <thead>
+                                        <th><label for="color">Individual</label></th>
+                                        <th ng-show="isSelectedSon('graph_line')"><label for="color">Colour</label></th>
+                                    </thead>
+                                    <body>
+                                        <tr ng-repeat="option in individualCombo_value_[metric.id] | pagination: curPageDataset * pageSizeDataset | limitTo: pageSizeDataset ">
+                                            <td>
+                                                <label ng-click="validateCheckboxes(metric.id, 'modal');">
+                                                    <span ng-hide="isSelectedSon('mercator') && !option.iscountry"><input type="checkbox" checklist-model="ModalIndividualDatasetCheckboxes_[metric.id]" checklist-value="option.id"></span> {{option.title}} &nbsp;<span ng-show="isSelectedSon('mercator') && !option.iscountry">(Is not a country)</span>
+                                                </label>
+                                            </td>
+                                            <td ng-show="isSelectedSon('graph_line') || isSelectedSon('graph_pie')">
+                                                <spectrum ng-init=" dataset_color_palete_[metric.id][option.id] = dataset_color_palete_[metric.id][option.id] == null ? colorScale(option.title) : dataset_color_palete_[metric.id][option.id] " ng-model="dataset_color_palete_[metric.id][option.id]" ng-model-onblur ng-change="changeColourIndividual()" options="{
+														showInput: true,
+														showAlpha: false,
+														allowEmpty: false,
+														preferredFormat: 'hex'
+													}"></spectrum>
+
+                                            </td>
+                                        </tr>
+                                    </body>
+                                </table>
+                              -->
+                            </div>
+                        </div>
+                        
+                        </div>
+                    </div>
+                </div>
+            </tab>
+        </tabset>
+
+    </div>
+</div>
+<div class="modal-footer ng-scope">
+    <button ng-disabled="disabledApplyButton" class="btn btn-primary btn-validate" ng-click="okModalWindowDataset()">{{ 'Apply' | translate }}</button>
+    <button class="btn btn-primary btn-clear" ng-click="cancelModalWindowDataset()">{{ 'Cancel' | translate }}</button>
+    <!--
+    <a href="#!/datasets/create" target="_blank" class="btn btn-default btn-create" id="adddataset">Create a new dataset</a>
+    -->
+</div>

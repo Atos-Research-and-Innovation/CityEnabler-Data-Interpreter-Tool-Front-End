@@ -1,0 +1,135 @@
+<div class="container container-create-visualization">
+
+    <div class="content-header">
+        <h1 ng-if="mode == 'create'" class="fonticon fonticon-story">Create a New Story</h1>
+        <h1 ng-if="mode == 'edit'" class="fonticon fonticon-story">Edit Story</h1>
+        <span ng-if="mode != 'create'">
+            Story by
+            <a class="fonticon fonticon-user normal">
+                <span>
+                    <username ng-if="story.creator_path" userpath="{{ story.creator_path }}"></username>
+                </span>
+            </a>, added <a>{{ story.issued | date:'longDate' }}</a>, last modified <a>{{ story.modified | date:'longDate' }}</a>
+        </span>
+    </div>
+
+    <div class="subtitle-help">
+        <h4>
+            <div class="fonticon fonticon-help help-switch" ng-click="openHelpModel($event,'help')"></div>
+            Story manager
+        </h4>
+
+    </div>
+
+    <div ng-class="{active: help}" class="help-text">
+        <div class="fonticon fonticon-close" ng-click="help=!help"></div>
+        <p>
+            To create or edit a story follow this process:
+            <ul>
+                <li>Story title: This is the title of your story.</li>
+                <li>Draft/public switch: Use this switch to toggle the status of your story from draft to public and vice-versa.</li>
+                <li>Add chapter: Appends a new chapter to your story.</li>
+                <li>Cancel: This will discard your story.</li>
+            </ul>
+        </p>
+
+        <p>
+            Adding interactive media:
+            <ul>
+                <li>You can add visualizations, metrics, fuzzymaps and datasets using the equivalent buttons.</li>
+                <li>Select your media and click "Add to chapter", to add it at the end of the current chapter.</li>
+            </ul>
+        </p>
+
+        <p>
+            Styling:
+            <ul>
+                <li>Use the toolbar to add and change styles.</li>
+                <li>You may add links, images and YouTube videos.</li>
+            </ul>
+        </p>
+    </div>
+
+    <div class="pc-visualization-formcontrols">
+        <div style="float:left" ng-show="canDraft">
+            <toggle-switch html="true" ng-model="story.is_draft" on-label="Draft" off-label="Public" class="switch-danger" ></toggle-switch>
+            &nbsp;
+        </div>
+        <div class="form-group pull-left btn-group">
+            <a href="#!/login" ng-if="!userState.loggedIn" class="btn btn-default btn-save" target="_blank">Login to  {{userState.userPath == story.creator_path || userState.isAdmin ? 'save' : 'save a copy'}}</a>
+            <a href="" id="saveButton" data-ng-disabled="storyForm.$invalid" ng-if="userState.loggedIn" class="btn btn-default btn-save" ng-click="saveStory()">{{(mode == 'create') || (userState.userPath == story.creator_path || userState.isAdmin) ? 'Save' : 'Save a copy'}}</a>
+            <a href="" id="addChapterButton" class="btn btn-default btn-add" ng-click="addChapter()">Add chapter</a>
+            <a href="" type="button" ng-if="mode == 'create' || (userState.userPath == story.creator_path || userState.isAdmin)" class="btn btn-danger fa-trash-o" ng-click="deleteStory()">Delete story</a>
+        </div>
+    </div>
+
+    <div class="content-body">
+        <form name="storyForm" role="form" novalidate>
+            <div class="form-group">
+                <label>Story Title *</label>
+                <input class="form-control" id="story_title" type="text" name="story_title" data-ng-model="story_title" required>
+            </div>
+
+            <tabset id="chaptersDiv">
+                <tab ng-repeat="chapter in chapters">
+                    <tab-heading>
+                        <button ng-if="!$first" type="button" class="close" ng-click='removeChapter(chapter.number)'>&times;</button>
+                        <span ng-if="chapter.title" title="{{ chapter.title }}">{{ chapter.title | limitTo:20 }}{{ chapter.title.length > 20 ? '...' : '' }}</span>
+                        <span ng-if="!chapter.title">Untitled chapter</span>
+                        &nbsp;
+                    </tab-heading>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input class='form-control' value="{{ chapter.title }}" id='chapter{{chapter.number}}_title' type='text' name='chapter{{chapter.number}}_title' placeholder='Chapter title (required)' ng-model="chapter.title" required>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div id='chapter{{chapter.number}}_content' name='chapter{{chapter.number}}_content'>
+                        <div id='chapter{{chapter.number}}_content_toolbox' name='chapter{{chapter.number}}_content_toolbox' class='story-chapter-content-toolbox'>
+                            <div class='row'>
+                                <div class='btn-group col-xs-12'>
+                                    <add-media-button-modal content-type="visualization" chapter="chapters[$index]"></add-media-button-modal>
+
+                                    <add-media-button-modal content-type="metric" chapter="chapters[$index]"></add-media-button-modal>
+
+                                    <add-media-button-modal content-type="fuzzymap" chapter="chapters[$index]"></add-media-button-modal>
+
+                                    <add-media-button-modal content-type="dataset" chapter="chapters[$index]"></add-media-button-modal>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <text-angular ng-model="chapter.text" placeholder='Place your story here (required)'></text-angular>
+                        </div>
+                    </div>
+
+                    <div ng-repeat="content in chapter.contents" class="well" style="margin-top: 20px; overflow: hidden;">
+                        <div>
+                            <a class="close" ng-click="removeFromChapter($parent.$index, $index, content.type)" title="Delete this {{ content.type }}">×</a>
+
+                            <div ng-switch on="content.type">
+                                <pc-visualization ng-switch-when="visualization" visualization-id="{{content.index}}"></pc-visualization>
+
+                                <pc-dataset ng-switch-when="dataset" dataset-id="{{content.index}}"></pc-dataset>
+
+                                <pc-metric ng-switch-when="metric" metric-id="{{content.index}}"></pc-metric>
+
+                                <pc-fcm ng-switch-when="fuzzymap" fcm-id="content.index"></pc-fcm>
+
+                                <div ng-switch-default>
+                                    <div class="alert alert-danger" style="margin-bottom: 0">Sorry, there is currently no renderer available for this {{ content.type }}.</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </tab>
+            </tabset>
+
+        </form>
+    </div>
+
+</div>

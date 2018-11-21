@@ -1,0 +1,17 @@
+var auth = angular.module('pcApp.auth', [
+    'pcApp.auth.services.auth',
+    'pcApp.auth.controllers.authControllers',
+    'pcApp.auth.directives.loginRegister'
+]);
+
+auth.config(function ($routeProvider) {
+    $routeProvider
+        .when('/login', {
+        	controller: 'redirectlogincontroller',
+            template: '<login></login>'
+        })
+        //.when('/register', {
+        //    template: '<register></register>'
+        //})
+        ;
+});

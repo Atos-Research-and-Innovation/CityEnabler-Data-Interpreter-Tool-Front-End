@@ -1,0 +1,155 @@
+<section>
+    <div id="top"></div>
+
+    <h4>{{'Importing data from an Orion Context Broker' | translate}}</h4>
+	<br/>
+
+	<p>
+		{{'Data from' | translate}}: {{enpointOrionCB}}
+		<br/>
+		{{'Type' | translate}}: {{typeEntityFilter}}
+		<br/>
+	<p>
+	</p>
+		{{'To create a subscription do you need to' | translate}}:
+		<ul>
+			<li>{{'Select an entity' | translate}}</li>
+			<li>{{'Input a duration' | translate}}</li>
+			<!--
+			<li>{{'Input a throttling' | translate}}</li>
+			-->
+		</ul>
+	</p> 
+				
+    <div ng-show="create_subscription_step1" class="search results">
+		<!--
+		<div ng-show="dataset.subscriptionId">
+			
+			<div>
+				<p>
+				This dataset has a subscription. The subscription Id is {{dataset.subscriptionId}}
+				</p>
+				<div class="dropdown btn-group" dropdown="">
+					<button type="button" class="btn btn-clear ng-binding" ng-click="unlinksubscription()">
+						Unlink dataset with the subscription					
+					</button>
+				</div>
+			</div>
+		</div>
+		-->
+
+		<div ng-show="!dataset.subscriptionId"  class="search-results  dataset-results-block">
+			
+			<div class="dropdown btn-group" dropdown="">
+				
+				<button type="button" class="btn btn-clear ng-binding" ng-click="hideDiv()">
+						{{ 'Cancel' | translate}}
+				</button>
+									
+			</div>
+			<div><br/></div>
+			<div class="form-group" >
+				
+				<label for="title">{{'Step' | translate}} 1/2: {{'Entity' | translate}} *</label>
+    	
+	            <div ng-show="entities.length == 0">
+	                
+	                <h5>{{ 'No results found' | translate}}.</h5>
+	            </div>
+	           
+	            <div ng-show="entities.length > 0" class="row" >
+	                
+	                <div class="search-results row-flex dataset-results-block">
+	
+		
+			 			<div ng-repeat="entity in entities"  value="{{$index}}" class="result-wrapper dataset-search-results">
+							<div class="result-block" ng-cloak>
+								<div class="search-result">
+									<h5 style="color:#333">										
+										<span ng-show="(('YEARLY' == '{{entity.calculationFrequency.value | uppercase}}') || ('MONTHLY' == '{{entity.calculationFrequency.value | uppercase}}') || ('DAILY' == '{{entity.calculationFrequency.value | uppercase}}'))">
+											<a  href="" ng-click="nextSubscriptionStep(2, entity)">{{entity.id | limitTo:60}}</a>
+										</span> 
+										<span ng-hide="(('YEARLY' == '{{entity.calculationFrequency.value | uppercase}}') || ('MONTHLY' == '{{entity.calculationFrequency.value | uppercase}}') || ('DAILY' == '{{entity.calculationFrequency.value | uppercase}}'))">
+											{{entity.id | limitTo:60}} - ({{'The periodicity of this entity is not valid' | translate}})
+										</span>
+									</h5>
+									
+									<p>{{'Description' | translate}}: {{ entity.description.value | limitTo:700}}</p>								
+									<p>{{'Frequency' | translate}}: {{ entity.calculationFrequency.value}}</p>
+									<p>{{'Last value' | translate}}: {{ entity.kpiValue.value}}, received at {{ entity.dateModified.value}}</p>
+									
+									
+								</div>
+							</div>
+						</div>	
+					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-show="create_subscription_step2" class="search-results  dataset-results-block">
+		
+		<div class="dropdown btn-group" dropdown="">
+
+			<button type="button" class="btn btn-prev ng-binding" ng-click="nextSubscriptionStep(1,'')">
+				{{'Change entity selected' | translate}}
+			</button>
+			<!--
+			<button ng-disabled="((!subscription_duration_number) || (!subscription_duration_period))" type="button" class="btn btn-next ng-binding" ng-click="nextSubscriptionStep(3,'')">
+				{{ 'Next' | translate}}
+			</button>
+			-->
+			<button ng-disabled="((!subscription_duration_number) || (!subscription_duration_period))" type="button" class="btn btn-next ng-binding" ng-click="nextSubscriptionStep(4,'')">
+				{{ 'Create a suscription to the context broker' | translate}}
+			</button>
+			
+			<button type="button" class="btn btn-clear ng-binding" ng-click="hideDiv()">
+				{{ 'Cancel' | translate}}
+			</button>
+								
+		</div>
+		<div><br/></div>
+		<div class="form-group" >
+			<label for="title">{{ 'Step' | translate}} 2/2: {{ 'Duration' | translate}} *</label>
+			<p>{{ 'Duration_Info' | translate}}</p>
+			<br/>
+			<input type="number" min="1" size="5" ng-model="subscription_duration_number" name="subscription_duration_number" step="1" required />
+			<select ng-model="subscription_duration_period" name="subscription_duration_period">
+  				<option value="Y">{{ 'Years' | translate}}</option>
+  				<option value="M">{{ 'Months' | translate}}</option>
+			</select>
+		</div>
+	
+	</div>
+	<!--
+	<div ng-show="create_subscription_step3" class="search-results dataset-results-block">
+
+		<div class="dropdown btn-group" dropdown="">
+			<button type="button" class="btn btn-prev ng-binding" ng-click="nextSubscriptionStep(2)">
+				{{ 'Back to select duration' | translate}}
+			</button>
+			<button ng-disabled="((!subscription_throttling_number) || (!subscription_throttling_period))" type="button" class="btn btn-next ng-binding" ng-click="nextSubscriptionStep(4,'')">
+				{{ 'Create a suscription to the context broker' | translate}}
+			</button>
+
+			<button type="button" class="btn btn-clear ng-binding" ng-click="hideDiv()">
+				{{ 'Cancel' | translate}}
+			</button>
+			
+		</div>
+		<div><br/></div>
+		<div class="form-group" >
+			<label for="title">{{ 'Step' | translate}} 3/3: {{ 'Throttling' | translate}} *</label>
+			<p>{{ 'Throttling_Info' | translate}}</p>
+			<br/>
+			<input type="number" min="1" size="5" ng-model="subscription_throttling_number" name="subscription_throttling_number" step="1" required />
+			<select ng-model="subscription_throttling_period" name="subscription_throttling_period">
+  				<option value="S">{{ 'Seconds' | translate}}</option>
+			</select>			
+		</div>
+		
+	</div>
+	-->
+</section>

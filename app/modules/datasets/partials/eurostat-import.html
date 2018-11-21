@@ -1,0 +1,119 @@
+<section>
+    <h4>{{ 'Import datasets from Eurostat' | translate }}:</h4>
+
+    <div class="input-group" id="eurostat_search">
+        <input type="text" class="form-control" placeholder="{{ 'import_search_placeholder_eurostat' | translate }}"
+               ng-keyup="$event.keyCode == 13 && search(searchTerm)"
+               ng-model="searchTerm"/>
+        <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="search(searchTerm)">
+            <span class="glyphicon glyphicon-search"></span>
+        </button>
+         </span>
+    </div>
+
+    <form name="eurostatFiltersForm" id="eurostatFiltersForm">
+        <div class="row text-center" ng-show="eurostatFilters">
+            <hr/>
+            <h3 name="dataset_header" id="dataset_header">{{ datasetName }}</h3>
+        </div>
+
+        <div class="search results" id="eurostat_searchResults">
+            <div ng-show="eurostatSearchResults.length == 0" class="row text-center">
+                <hr/>
+                <br>
+                <h5>{{ 'No results found' | translate}}.</h5>
+            </div>
+            <div ng-show="eurostatSearchResults && !eurostatFilters">
+                <br>
+                <hr/>
+                <div class="row">
+                    <div ng-repeat="dataset in eurostatSearchResults" class="eurostat-searchResult">
+                        <div class="well col-md-10 col-xs-3 dataset-search">
+                            <div class="attributes">
+                                <h5>
+                                    <a href ng-click="searchForDataset(dataset[0]); updateFilters(); saveDatasetName(dataset);">{{dataset[1] | limitTo:80}}</a>
+                                </h5>
+                                <p>Eurostat data code: {{dataset[0]}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center" ng-show="eurostatSearchResults.length != 0">
+                    <pagination total-items="eurostatTotalSearchResults.length" ng-change="onPageChange()" items-per-page="itemsPerPage" ng-model="currentPage" max-size="5" class="pagination-sm" style="float: inherit;" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
+                </div>
+            </div>
+
+            <div ng-show="eurostatFilters" >
+                <br>
+                <br>
+                <div class="row">
+                    <div class="form-group col-lg-4 eurostat-filters">
+                        <div class="pc-reference-selection-full">
+                            <h5>GEO</h5>
+                            <div id="geo" ng-model="geo" class=""
+                                 isteven-multi-select
+                                 on-reset="onReset()"
+                                 on-close="saveFilter('geo',output); updateFilters()"
+                                 input-model="filterGeos"
+                                 output-model="output"
+                                 button-label="name"
+                                 item-label="name"
+                                 tick-property="ticked"
+                            >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-4 eurostat-filters">
+                        <div class="pc-reference-selection-full">
+                            <h5>TIME</h5>
+                            <div id="time" ng-model="time" class=""
+                                 isteven-multi-select
+                                 on-reset="onReset()"
+                                 on-close="saveFilter('time',output); updateFilters()"
+                                 input-model="filterTimes"
+                                 output-model="output"
+                                 button-label="name"
+                                 item-label="name"
+                                 tick-property="ticked"
+                            >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-repeat="pair in eurostatValues" class="form-group col-lg-4 eurostat-filters">
+                        <div class="pc-reference-selection-full">
+                            <h5>{{pair[0]}}</h5>
+                            <div id="{{pair[0]}}" ng-model="pair[0]" class=""
+                                 isteven-multi-select
+                                 on-reset="onReset()"
+                                 on-close="saveFilter(pair[0],output); updateFilters()"
+                                 input-model="pair[1]"
+                                 output-model="output"
+                                 button-label="name"
+                                 item-label="name"
+                                 tick-property="ticked"
+                                 selection-mode="single"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" ng-show="moreFilters && eurostatFilters">
+                <br>
+                <div class="col-md-4 col-xs-12 col-md-offset-4 text-center">
+                    <span name="message_filters" id="message_filters">Please select more filters.</span>
+                </div>
+            </div>
+            <div class="row" ng-show="wrongFilterValues && eurostatFilters">
+                <br>
+                <div class="col-md-4 col-xs-12 col-md-offset-4 text-center">
+                    <span name="message_values" id="message_values">No Results for selected filter values.</span>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>

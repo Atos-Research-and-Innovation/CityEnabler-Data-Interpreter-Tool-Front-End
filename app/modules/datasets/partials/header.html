@@ -1,0 +1,59 @@
+<div class="content-header">
+    <h3 class="fonticon fonticon-dataset">{{ 'Upload Dataset' | translate }}</h3>
+
+    <div class="subtitle-help">
+        <h4>
+            <div class="fonticon fonticon-help help-switch" ng-click="help=!help"></div>
+            {{ stepData.title | translate }}            
+        </h4>
+        
+        <div ng-show="stepData.warning_header">
+            <p>{{ stepData.warning_header | translate }}
+            <ul>
+            	<li ng-show="stepData.warning_rule1">{{ stepData.warning_rule1 | translate }}</li>
+             	<li ng-show="stepData.warning_rule2">{{ stepData.warning_rule2 | translate }}</li>
+            	<li ng-show="stepData.warning_rule3">{{ stepData.warning_rule3 | translate }}</li>
+            	<li ng-show="stepData.warning_rule4">{{ stepData.warning_rule4 | translate }}
+            </ul>
+            </p>
+        </div>
+        
+        <div ng-class="{active: help}" class="help-text">
+            <div class="fonticon fonticon-close" ng-click="help=!help"></div>
+            <p><span ng-bind-html="stepData.help | translate"></span></p>
+            
+            
+            <p ng-show="stepData.warning_header">{{ stepData.warning_header | translate }}
+            <ul>
+            	<li ng-show="stepData.warning_rule1">{{ stepData.warning_rule1 | translate }}</li>
+             	<li ng-show="stepData.warning_rule2">{{ stepData.warning_rule2 | translate }}</li>
+            	<li ng-show="stepData.warning_rule3">{{ stepData.warning_rule3 | translate }}</li>
+            	<li ng-show="stepData.warning_rule4">{{ stepData.warning_rule4 | translate }}
+            </ul>
+            </p>
+
+            
+        </div>
+    </div>
+    <ul class="navigation-steps">
+        <div style="float:left" ng-show="!stepData.next">
+            <toggle-switch html="true" ng-model="dataset.is_draft" on-label="{{ 'Draft' | translate }}" off-label="{{ 'Public' | translate }}" class="switch-danger" ></toggle-switch>
+            &nbsp;
+        </div>
+        <li><a href="" class="btn btn-prev" ng-disabled="!stepData.prev" ng-click="prevStep()">{{ 'Previous Step' | translate }}</a></li>
+        <li><a href="" class="btn btn-next" ng-disabled="orion" ng-show="stepData.next" ng-click="nextStep()">{{ 'Next Step' | translate }}</a></li>
+
+        <li>
+            <a href="#!/login" target="_blank" class="btn btn-save" ng-show="!stepData.next && !userState.loggedIn">{{ 'Login to Save' | translate }}</a>
+        </li>
+        <li>
+            <a href="" class="btn btn-save" ng-show="!stepData.next && userState.loggedIn" ng-click="saveFinish()">{{ 'Save & Finish' | translate }}</a>
+        </li>
+        <li>
+            <a href="" class="btn btn-save" ng-show="!stepData.next && userState.loggedIn" ng-click="saveCopy()">{{ 'Save & Copy' | translate }}</a>
+        </li>
+
+
+        <li><a href="" class="btn btn-danger" ng-click="cancel()">{{ 'Cancel' | translate }}</a></li>
+    </ul>
+</div>
