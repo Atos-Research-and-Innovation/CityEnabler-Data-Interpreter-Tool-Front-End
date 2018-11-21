@@ -59,8 +59,8 @@ compass watch
 * for modify certain styles inspect the element in Chrome and click the .css file at the right panel, the comment has the exact .scss line in which the style is defined.
 
 
-## Cedus is Free Software
+## CityEnabler-Data-Interpreter-Tool-Front-End Software
 
-This project (i.e. all files in this repository if not declared otherwise) is
-licensed under the GNU Affero General Public License (AGPLv3), see
-LICENSE.txt.
+CityEnabler-Data-Interpreter-Tool-Front-End is based on the output of the PolicyCompass project. 
+
+For more information see https://github.com/policycompass
